@@ -2,7 +2,9 @@ package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.controller;
 
 
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services.OrderProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -22,5 +24,8 @@ public class CreateAndReceiveOrderController {
         return orderProductService.orderProduct(orderEntry,storeId);
     }
 
-
+    @PutMapping("product-order/{orderId}")
+    ResponseEntity<?> receivedOrder(@RequestBody ReceivedOrder receivedOrder, @PathVariable Long orderId){
+        return orderProductService.updateProductOrderDeliveryDate(receivedOrder,orderId);
+    }
 }
