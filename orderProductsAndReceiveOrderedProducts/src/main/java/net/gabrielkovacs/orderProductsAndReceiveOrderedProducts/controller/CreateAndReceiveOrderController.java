@@ -3,16 +3,17 @@ package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.controller;
 
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.StockItem;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services.OrderProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 
 @RestController
 public class CreateAndReceiveOrderController {
 
     private OrderProductService orderProductService;
+    private final String baseUri = "http://localhost:8085";
 
     public CreateAndReceiveOrderController(OrderProductService orderProductService){
         this.orderProductService = orderProductService;
@@ -27,5 +28,11 @@ public class CreateAndReceiveOrderController {
     @PutMapping("product-order/{orderId}")
     ResponseEntity<?> receivedOrder(@RequestBody ReceivedOrder receivedOrder, @PathVariable Long orderId){
         return orderProductService.updateProductOrderDeliveryDate(receivedOrder,orderId);
+    }
+
+    @GetMapping("stockitem")
+    public ResponseEntity<StockItem> getStuff() {
+        this.orderProductService.setWebClientBaseUri(this.baseUri);
+        return orderProductService.getStockItem(200, 100);
     }
 }

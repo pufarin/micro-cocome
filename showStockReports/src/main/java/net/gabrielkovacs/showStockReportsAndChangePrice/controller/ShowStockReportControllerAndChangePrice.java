@@ -1,13 +1,19 @@
 package net.gabrielkovacs.showStockReportsAndChangePrice.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItem;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItemReport;
 import net.gabrielkovacs.showStockReportsAndChangePrice.repository.StockItemRepository;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -41,6 +47,36 @@ class ShowStockReportControllerAndChangePrice {
 
         return ResponseEntity.ok().body(queryResult);
     }
+
+    @GetMapping("stockitem")
+    public ResponseEntity<StockItem> getStockItemByStoreIdAndProductId(@RequestParam long storeId, @RequestParam long productId){
+
+        Optional<StockItem> queryResult = stockItemRepository.findAllByStoreIdAndProductId(storeId,productId);
+
+        if(queryResult.isPresent()){
+            return ResponseEntity.ok().body(queryResult.get());
+
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("stockitem/{stockItemId}")
+    public ResponseEntity<?> updateStockItem(@RequestBody StockItem stockItem, @PathVariable Long stockItemId){
+
+        Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
+
+        if(queryResult.isPresent() && stockItem.getId() == stockItemId){
+            stockItemRepository.save(stockItem);
+            return ResponseEntity.ok().build();
+
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
+
 
     @PutMapping("stockitem/store/{storeId}/{stockItemId}")
     void updatePrice(@RequestBody StockItem newStockItem, @PathVariable Long storeId, @PathVariable Long stockItemId){
