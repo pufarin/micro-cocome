@@ -1,6 +1,7 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductDeliveryDuration;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductOrder;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.StockItem;
@@ -11,8 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -88,13 +90,13 @@ public class OrderProductService {
     }
 
 
-public ResponseEntity<StockItem> getStockItem(long storeId, long productId){
-    return webClient.get()
-                    .uri(getStockItemByStoreIdAnsProductId, storeId,productId)
-                    .exchange()
-                    .flatMap(response -> response.toEntity(StockItem.class))
-                    .block();
- }
+    public ResponseEntity<StockItem> getStockItem(long storeId, long productId){
+        return webClient.get()
+                        .uri(getStockItemByStoreIdAnsProductId, storeId,productId)
+                        .exchange()
+                        .flatMap(response -> response.toEntity(StockItem.class))
+                        .block();
+    }
 
 
     public ResponseEntity<?> updateStockItemAmount(StockItem stockItem, long stockItemId ){
@@ -105,5 +107,14 @@ public ResponseEntity<StockItem> getStockItem(long storeId, long productId){
                        // .retrieve()
                        // .bodyToMono(ResponseEntity.class)
                         .block();
+    }
+
+    public ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(ArrayList<Long> productsId){
+        List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
+        if(queryResult.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().body(queryResult);
     }
 }
