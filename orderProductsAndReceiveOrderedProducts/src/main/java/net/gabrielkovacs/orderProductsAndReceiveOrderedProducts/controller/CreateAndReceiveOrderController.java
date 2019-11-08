@@ -34,7 +34,7 @@ public class CreateAndReceiveOrderController {
         return orderProductService.updateProductOrderDeliveryDate(receivedOrder,orderId);
     }
 
-    @GetMapping("product-order")
+    @GetMapping("product-order/delivery-time")
     ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(@RequestParam ArrayList<Long> productsId){
         return orderProductService.getDeliveryDurationPerProduct(productsId);
     }

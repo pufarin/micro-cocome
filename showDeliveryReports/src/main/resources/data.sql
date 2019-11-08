@@ -7,11 +7,12 @@ insert into tradinge_products(trading_enterprise_id, product_supplier_id) values
 insert into tradinge_products(trading_enterprise_id, product_supplier_id) values (901, 801);
 insert into tradinge_products(trading_enterprise_id, product_supplier_id) values (901, 802);
 
-/*
+
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (100, 12345, 'apple', 25, 800);
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (101, 12346, 'orange', 15, 801);
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (102, 12347, 'banana', 16, 802);
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (103, 12348, 'cabage', 17, 802);
+/*
 insert into store (id, location, name, tradingenterpriseid) values (200, 'viena1', 'store1', 901);
 insert into store (id, location, name, tradingenterpriseid) values (201, 'viena2', 'store2', 901);
 insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (300,4,5,25,35,100,200);

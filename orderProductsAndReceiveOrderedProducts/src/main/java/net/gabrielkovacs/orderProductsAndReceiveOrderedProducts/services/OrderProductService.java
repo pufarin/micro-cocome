@@ -109,7 +109,7 @@ public class OrderProductService {
                         .block();
     }
 
-    public ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(ArrayList<Long> productsId){
+    public ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(List<Long> productsId){
         List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
         if(queryResult.isEmpty()){
             return ResponseEntity.notFound().build();

@@ -19,5 +19,5 @@ public interface ProductOrderRepository extends JpaRepository<ProductOrder, Long
 
     @Query(value = "select oe.product_id as productId ,  datediff(day, po.ordering_date, po.delivery_date) as nrDays from productorder po join orderentry oe " +
                     "on oe.product_order_id = po.id where oe.product_id in (?1)", nativeQuery = true)
-    List<ProductDeliveryDuration> getNrDaysPerProductDelivery(ArrayList<Long> productsId);
+    List<ProductDeliveryDuration> getNrDaysPerProductDelivery(List<Long> productsId);
 }
