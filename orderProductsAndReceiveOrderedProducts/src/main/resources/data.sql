@@ -24,6 +24,8 @@ insert into store (id, location, name, tradingenterpriseid) values (201, 'viena2
 
 */
 
+/*  for testing*/
+
 insert into productorder (id, delivery_date, ordering_date, store_id) values (5, '2019-10-06' ,'2019-10-04' , 200);
 insert into productorder (id, delivery_date, ordering_date, store_id) values (6, '2019-10-07', '2019-10-04', 200);
 insert into productorder (id, delivery_date, ordering_date, store_id) values (7, '2019-10-08', '2019-10-04', 200);

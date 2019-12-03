@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItem;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItemReport;
 import net.gabrielkovacs.showStockReportsAndChangePrice.repository.StockItemRepository;
@@ -26,6 +27,7 @@ class ShowStockReportControllerAndChangePrice {
         this.stockItemRepository = stockItemReportRepository;
     }
     
+    @Operation(summary = "UC5 Show Stock Reports", description = "Returns a Stock Item Report for a given store id")
     @GetMapping("stockitemreport/{storeId}")
     public ResponseEntity<List<StockItemReport>> getStoreItemReport(@PathVariable long storeId){
 
@@ -48,6 +50,7 @@ class ShowStockReportControllerAndChangePrice {
         return ResponseEntity.ok().body(queryResult);
     }
 
+    @Operation(summary = "Used for UC4 receive ordered products", description = "Returns the stockItem for which a new order has arrived")
     @GetMapping("stockitem")
     public ResponseEntity<StockItem> getStockItemByStoreIdAndProductId(@RequestParam long storeId, @RequestParam long productId){
 
@@ -61,6 +64,7 @@ class ShowStockReportControllerAndChangePrice {
         }
     }
 
+    @Operation(summary = "Used for UC4 receive ordered products", description = "Updates the amount of a stockItem by the amount ordered ")
     @PutMapping("stockitem/{stockItemId}")
     public ResponseEntity<?> updateStockItem(@RequestBody StockItem stockItem, @PathVariable Long stockItemId){
 
@@ -77,7 +81,7 @@ class ShowStockReportControllerAndChangePrice {
     }
 
 
-
+    @Operation(summary = "UC7 Change Stock Item Price ", description = "Updates the price of a stockItem based on the provided data")
     @PutMapping("stockitem/store/{storeId}/{stockItemId}")
     void updatePrice(@RequestBody StockItem newStockItem, @PathVariable Long storeId, @PathVariable Long stockItemId){
         Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
