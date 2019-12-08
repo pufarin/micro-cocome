@@ -1,0 +1,25 @@
+version: '3.7'
+
+
+# Define services
+services:
+    order_products_and_receive_ordered_products:
+        build:
+            context: ./orderProductsAndReceiveOrderedProducts
+            dockerfile: Dockerfile
+        ports:
+            - "8083:8083"
+    
+    show_delivery_reports:
+        build:
+            context: ./showDeliveryReports
+            dockerfile: Dockerfile
+        ports: 
+            - "8086:8086"
+
+    show_stock_reports:
+        build:
+            context: ./showStockReports
+            dockerfile: Dockerfile
+        ports:
+            - "8085:8085"
