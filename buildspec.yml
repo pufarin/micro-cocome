@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+  pre_build:
+    commands:
+      - echo Nothing to do in the pre_build phase...
+  build:
+    commands:
+    - echo Build started on `date`
+    - cd orderProductsAndReceiveOrderedProducts
+    - mvn clean package
+    - cd ../showDeliveryReports
+    - mvn clean package
+    - cd ../showStockReports
+    - mvn clean package
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - orderProductsAndReceiveOrderedProducts/target/orderProductsAndReceiveOrderedProducts-0.0.1-SNAPSHOT.jar
+    - showDeliveryReports/target/showDeliveryReports-0.0.1-SNAPSHOT.jar
+    - showStockReports/target/showStockReports-0.0.1-SNAPSHOT.jar
