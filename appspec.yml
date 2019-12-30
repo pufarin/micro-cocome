@@ -3,7 +3,7 @@ os: linux
 files:
   - source: /
     destination: /home/ec2-user/deploy
-#hooks:
+hooks:
 #  BeforeInstall:
 #    - location: scripts/copy_last_revision.sh
 #       timeout: 300
@@ -12,12 +12,12 @@ files:
 #     - location: scripts/change_permissions.sh
 #       timeout: 300
 #       runas: root
-#   ApplicationStart:
-#     - location: scripts/start_server.sh
+  ApplicationStart:
+      - location: scripts/start_jars.sh
 #     - location: scripts/create_test_db.sh
 #       timeout: 300
 #       runas: root
-#   ApplicationStop:
-#     - location: scripts/stop_server.sh
+  ApplicationStop:
+     - location: scripts/stop_jars.sh
 #       timeout: 300
 #       runas: root
