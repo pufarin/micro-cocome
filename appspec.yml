@@ -13,11 +13,11 @@ hooks:
 #       timeout: 300
 #       runas: root
   ApplicationStart:
-      - location: scripts/start_jars.sh
+      - location: start_jars.sh
 #     - location: scripts/create_test_db.sh
 #       timeout: 300
 #       runas: root
   ApplicationStop:
-     - location: scripts/stop_jars.sh
+     - location: stop_jars.sh
 #       timeout: 300
 #       runas: root

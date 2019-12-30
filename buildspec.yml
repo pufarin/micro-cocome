@@ -25,4 +25,6 @@ artifacts:
     - showDeliveryReports/target/showDeliveryReports-0.0.1-SNAPSHOT.jar
     - showStockReports/target/showStockReports-0.0.1-SNAPSHOT.jar
     - appspec.yml
+    - scripts/start_jars.sh
+    - scripts/stop_jars.sh
   discard-paths: yes
