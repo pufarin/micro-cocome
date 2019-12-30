@@ -4,8 +4,8 @@ files:
   - source: /
     destination: /home/ec2-user/deploy
 hooks:
-#  BeforeInstall:
-#    - location: scripts/copy_last_revision.sh
+  BeforeInstall:
+    - location: remove_old_files.sh
 #       timeout: 300
 #       runas: root
 #   AfterInstall:
