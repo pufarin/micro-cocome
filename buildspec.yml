@@ -27,4 +27,5 @@ artifacts:
     - appspec.yml
     - scripts/start_jars.sh
     - scripts/stop_jars.sh
+    - scripts/remove_old_files.sh
   discard-paths: yes
