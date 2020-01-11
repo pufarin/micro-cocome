@@ -8,12 +8,9 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                sh 'cd /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts'
-                sh 'mvn clean package'
-                sh 'cd ../showDeliveryReports'
-                sh 'mvn clean package'
-                sh 'cd ../showStockReports'
-                sh 'mvn clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/j1/showDeliveryReports/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/j1/showStockReports/pom.xml clean package'
             }
         }
         stage('Test') {
