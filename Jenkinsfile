@@ -26,7 +26,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying Some Stuff Mda 1....'
-                sh 'docker-compose up'
+                
             }
         }
     }
