@@ -22,7 +22,7 @@ pipeline {
         stage('Copy Files') {
             steps {
                 echo 'Staging files'
-                sh "cp -v /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar /home/gabriel/gabriel/deploy"
+                sh "cp var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar home/gabriel/gabriel/deploy"
         
             }
         }    
