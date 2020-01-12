@@ -17,7 +17,7 @@ pipeline {
                 sh 'cp /var/lib/jenkins/workspace/j1/showDeliveryReports/target/*.jar /home/gabriel/gabriel/deploy'
                 sh 'cp /var/lib/jenkins/workspace/j1/showStockReports/target/*.jar /home/gabriel/gabriel/deploy'
                 */
-                fileCopyOperation('/var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/orderProductsAndReceiveOrderedProducts-0.0.1-SNAPSHOT.jar','','/home/gabriel/gabriel/deploy',false)
+                fileCopyOperation('/var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/orderProductsAndReceiveOrderedProducts-0.0.1-SNAPSHOT.jar','','/home/gabriel/gabriel/deploy/orderProductsAndReceiveOrderedProducts-0.0.1-SNAPSHOT.jar',false)
             }
         }
         stage('Test') {
