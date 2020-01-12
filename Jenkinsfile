@@ -20,9 +20,9 @@ pipeline {
             }
         }
         stage('Copy Files') {
-            script {
-            echo 'Staging files'
-            sh "cp -v /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar /home/gabriel/gabriel/deploy"
+            steps {
+                echo 'Staging files'
+                sh "cp -v /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar /home/gabriel/gabriel/deploy"
         
             }
         }    
