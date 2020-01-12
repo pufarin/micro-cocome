@@ -22,9 +22,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying Some Stuff Mda 1....'
+                /*
                 sh "java -jar /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar&"
                 sh "java -jar /var/lib/jenkins/workspace/j1/showDeliveryReports/target/*.jar&" 
                 sh "java -jar /var/lib/jenkins/workspace/j1/showStockReports/target/*.jar&"  
+                */
+                sh "docker-compose -f /var/lib/jenkins/workspace/j1/docker-compose.yml up -d"
             }
         }
     }
