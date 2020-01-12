@@ -13,7 +13,7 @@ pipeline {
                 sh 'mvn -f /var/lib/jenkins/workspace/j1/showStockReports/pom.xml clean package'
                 echo 'Jars have been created'
                 
-                sh "copy /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar /home/gabriel/deploy/orderProductsAndReceiveOrderedProducts-0.0.1-SNAPSHOT.jar"
+                sh "cp -v /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar /home/gabriel/deploy/orderProductsAndReceiveOrderedProducts-0.0.1-SNAPSHOT.jar"
                // sh "cp /var/lib/jenkins/workspace/j1/showDeliveryReports/target/*.jar /home/gabriel/gabriel/deploy"
                // sh "cp /var/lib/jenkins/workspace/j1/showStockReports/target/*.jar /home/gabriel/gabriel/deploy"
                 
