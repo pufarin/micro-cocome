@@ -30,11 +30,12 @@ pipeline {
                // sh "docker-compose -f /var/lib/jenkins/workspace/j1/docker-compose.yml up -d"
             }
         }
-            post { 
+
+    }
+                post { 
         always { 
             echo 'I will always say Hello again!'
              sh "docker-compose -f /var/lib/jenkins/workspace/j1/docker-compose.yml up -d"
         }
-    }
     }
 }
