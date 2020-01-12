@@ -1,11 +1,15 @@
 pipeline {
+    agent none
+    /*
     agent {
         docker{
             image 'adoptopenjdk/maven-openjdk11'
         }
     }
+    */
     stages {
         stage('Build') {
+            agent {docker 'adoptopenjdk/maven-openjdk11' }
             steps {
                 echo 'Building..'
                 sh 'mvn -f /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
@@ -20,6 +24,7 @@ pipeline {
             }
         }
         stage('Deploy') {
+            agent {docker 'docker/compose'}
             steps {
                 echo 'Deploying Some Stuff Mda 1....'
                 /*
@@ -27,15 +32,17 @@ pipeline {
                 sh "java -jar /var/lib/jenkins/workspace/j1/showDeliveryReports/target/*.jar&" 
                 sh "java -jar /var/lib/jenkins/workspace/j1/showStockReports/target/*.jar&"  
                 */
-               // sh "docker-compose -f /var/lib/jenkins/workspace/j1/docker-compose.yml up -d"
+                sh "docker-compose -f /var/lib/jenkins/workspace/j1/docker-compose.yml up -d"
             }
         }
 
     }
+    /*
                 post { 
         always { 
             echo 'I will always say Hello again!'
              sh "docker-compose -f /var/lib/jenkins/workspace/j1/docker-compose.yml up -d"
         }
     }
+    */
 }
