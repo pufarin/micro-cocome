@@ -26,7 +26,10 @@ pipeline {
         stage('Deploy') {
             agent {docker 'docker/compose'}
             steps {
-                echo 'Deploying Some Stuff Mda 1....'
+                echo 'Stop the existing application'
+                sh "docker-compose -f /var/lib/jenkins/workspace/j1/docker-compose.yml down"
+
+                echo 'Start the application'
                 /*
                 sh "java -jar /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar&"
                 sh "java -jar /var/lib/jenkins/workspace/j1/showDeliveryReports/target/*.jar&" 
