@@ -12,10 +12,12 @@ pipeline {
                 sh 'mvn -f /var/lib/jenkins/workspace/j1/showDeliveryReports/pom.xml clean package'
                 sh 'mvn -f /var/lib/jenkins/workspace/j1/showStockReports/pom.xml clean package'
                 echo 'Jars have been created'
-                
+                /*
                 sh 'cp /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar /home/gabriel/gabriel/deploy'
                 sh 'cp /var/lib/jenkins/workspace/j1/showDeliveryReports/target/*.jar /home/gabriel/gabriel/deploy'
                 sh 'cp /var/lib/jenkins/workspace/j1/showStockReports/target/*.jar /home/gabriel/gabriel/deploy'
+                */
+                fileCopyOperation('/var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar','','/home/gabriel/gabriel/deploy',false)
             }
         }
         stage('Test') {
