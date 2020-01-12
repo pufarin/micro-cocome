@@ -22,7 +22,7 @@ pipeline {
         stage('Copy Files') {
             steps {
                 echo 'Staging files'
-                sh "cp var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar home/gabriel/gabriel/deploy"
+                //sh "cp var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar home/gabriel/gabriel/deploy"
         
             }
         }    
@@ -34,7 +34,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying Some Stuff Mda 1....'
-                
+                sh "java -jar /var/lib/jenkins/workspace/j1/orderProductsAndReceiveOrderedProducts/target/*.jar"
+                sh "java -jar /var/lib/jenkins/workspace/j1/showDeliveryReports/target/*.jar" 
+                sh "java -jar /var/lib/jenkins/workspace/j1/showStockReports/target/*.jar"  
             }
         }
     }
