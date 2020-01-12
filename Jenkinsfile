@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Deploy') {
            // agent {docker 'docker/compose'}
-            agent any
+            agent none
             steps {
                 echo 'Deploying Some Stuff Mda 1....'
                 /*
