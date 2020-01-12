@@ -24,7 +24,9 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent {docker 'docker/compose'}
+           // agent {docker 'docker/compose'}
+            agent any 
+            options { skipDefaultCheckout() }
             steps {
                 echo 'Stop the existing application'
                 sh "docker-compose -f /var/lib/jenkins/workspace/j1/docker-compose.yml down"
