@@ -1,11 +1,15 @@
 package net.gabrielkovacs.apigateway.services;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import net.gabrielkovacs.apigateway.models.ProductOrder;
 import net.gabrielkovacs.apigateway.models.SubmitedOrder;
+import net.gabrielkovacs.apigateway.models.StockItemReport;
+
 
 @Service
 public class ApiGatewayServices{
@@ -15,6 +19,8 @@ public class ApiGatewayServices{
     private final String createOrderPath = "/store/{id}/order";
 
     private final String stockReports = "http://localhost:8085";
+    private final String getStockItemReports = "stockitemreport/{storeId}";
+
     private final String deliveryReports = "http://localhost:8086";
 
     private WebClient webClient;
@@ -31,6 +37,15 @@ public class ApiGatewayServices{
                         .flatMap(response -> response.toEntity(ProductOrder.class))
                         .block();
 
+    }
+
+    public ResponseEntity<List<StockItemReport>> getStockItemReports(Long storeId){
+        setWebClientBaseUri(stockReports);
+        return webClient.get().uri(getStockItemReports, storeId)
+                        .exchange()
+                        .flatMap(response -> response.toEntityList(StockItemReport.class))
+                        .block();
+        
     }
 
 }
