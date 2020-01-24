@@ -9,6 +9,7 @@ import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services.OrderPr
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,9 @@ public class CreateAndReceiveOrderController {
 
     @Operation(summary = "UC3 order products")
     @PostMapping("store/{storeId}/order")
-    public OrderEntry orderProduct(@RequestBody OrderEntry orderEntry, @PathVariable Long storeId){
-        return orderProductService.orderProduct(orderEntry,storeId);
+    public ResponseEntity<OrderEntry> orderProduct(@RequestBody OrderEntry orderEntry, @PathVariable Long storeId){
+        OrderEntry toReturn =  orderProductService.orderProduct(orderEntry,storeId);
+        return new ResponseEntity<OrderEntry>(toReturn, HttpStatus.CREATED);
     }
 
     @Operation(summary = "UC4 receive ordered products", description = "Adds the delivery date into the ProductOrder table as well as updates the stock (needs showStockReports) ")
