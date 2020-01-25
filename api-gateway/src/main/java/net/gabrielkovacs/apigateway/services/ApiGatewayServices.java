@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import net.gabrielkovacs.apigateway.models.OrderDeliveryDate;
 import net.gabrielkovacs.apigateway.models.ProductOrder;
 import net.gabrielkovacs.apigateway.models.StockItem;
 import net.gabrielkovacs.apigateway.models.SubmitedOrder;
@@ -17,6 +18,7 @@ public class ApiGatewayServices {
 
     private final String productManagementBaseUrl = "http://localhost:8083";
     private final String createOrderPath = "/store/{id}/order";
+    private final String receivedOrderPath = "/product-order/{orderEntryId}";   
 
     private final String stockReports = "http://localhost:8085";
     private final String getStockItemReports = "stockitemreport/{storeId}";
@@ -53,6 +55,17 @@ public class ApiGatewayServices {
                         .flatMap(response -> response.toEntity(StockItem.class))
                         .block();
  
+
+    }
+
+    public ResponseEntity<OrderDeliveryDate> receiveOrder(OrderDeliveryDate orderDeliveryDate, Long orderEntryId){
+        setWebClientBaseUri(productManagementBaseUrl);
+        return webClient.put()
+                        .uri(receivedOrderPath, orderEntryId )
+                        .bodyValue(orderDeliveryDate)
+                        .exchange()
+                        .flatMap(response -> response.toEntity(OrderDeliveryDate.class))
+                        .block();
 
     }
 

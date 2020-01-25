@@ -3,6 +3,7 @@ package net.gabrielkovacs.apigateway.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.ClientResponse;
 
+import net.gabrielkovacs.apigateway.models.OrderDeliveryDate;
 import net.gabrielkovacs.apigateway.models.ProductOrder;
 import net.gabrielkovacs.apigateway.models.StockItem;
 import net.gabrielkovacs.apigateway.models.StockItemReport;
@@ -31,9 +32,8 @@ public class GatewayController {
     }
 
     @PostMapping("stores/{storeId}/orders")
-    public ResponseEntity<ProductOrder> postMethodName(@RequestBody SubmitedOrder submitedOrder, @PathVariable Long storeId) {
-        //TODO: process POST request
-        
+    public ResponseEntity<ProductOrder> createOrder(@RequestBody SubmitedOrder submitedOrder, @PathVariable Long storeId) {
+                
         return apiGatewayServices.submitProductOrder(submitedOrder, storeId);
     }
     
@@ -46,5 +46,13 @@ public class GatewayController {
     public ResponseEntity<StockItem> chengeSrockItemPrice(@PathVariable Long storeId,@PathVariable Long stockItemId, @RequestBody StockItem stockItem) {
                
         return apiGatewayServices.changeProductPrice(storeId, stockItemId, stockItem);
+
+    }    
+    @PutMapping("stores/{storeId}/orders/{orderId}")
+    public ResponseEntity<OrderDeliveryDate> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
+        return apiGatewayServices.receiveOrder(orderDeliveryDate, orderId);
+        
     }
+        
+    
 }
