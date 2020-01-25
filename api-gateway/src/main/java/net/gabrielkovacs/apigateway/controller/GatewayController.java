@@ -8,6 +8,7 @@ import net.gabrielkovacs.apigateway.models.ProductOrder;
 import net.gabrielkovacs.apigateway.models.StockItem;
 import net.gabrielkovacs.apigateway.models.StockItemReport;
 import net.gabrielkovacs.apigateway.models.SubmitedOrder;
+import net.gabrielkovacs.apigateway.models.SupplierPerformance;
 import net.gabrielkovacs.apigateway.services.ApiGatewayServices;
 
 import java.util.List;
@@ -54,5 +55,9 @@ public class GatewayController {
         
     }
         
+    @GetMapping("enterprises/{enterpriseId}/delivery-reports")
+    public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(@PathVariable Long enterpriseId){
+        return apiGatewayServices.getDeliveryReports(enterpriseId);
+    }
     
 }

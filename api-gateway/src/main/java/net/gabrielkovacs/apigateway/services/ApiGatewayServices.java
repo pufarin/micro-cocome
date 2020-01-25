@@ -11,6 +11,7 @@ import net.gabrielkovacs.apigateway.models.OrderDeliveryDate;
 import net.gabrielkovacs.apigateway.models.ProductOrder;
 import net.gabrielkovacs.apigateway.models.StockItem;
 import net.gabrielkovacs.apigateway.models.SubmitedOrder;
+import net.gabrielkovacs.apigateway.models.SupplierPerformance;
 import net.gabrielkovacs.apigateway.models.StockItemReport;
 
 @Service
@@ -25,6 +26,7 @@ public class ApiGatewayServices {
     private final String changePrice = "stockitem/store/{storeId}/{stockItemId}";
 
     private final String deliveryReports = "http://localhost:8086";
+    private final String getDeliveryReports = "/delivery-report/{enterpriseId}";
 
     private WebClient webClient;
 
@@ -67,6 +69,15 @@ public class ApiGatewayServices {
                         .flatMap(response -> response.toEntity(OrderDeliveryDate.class))
                         .block();
 
+    }
+
+    public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(Long enterpriseId){
+        setWebClientBaseUri(deliveryReports);
+        return webClient.get()
+                        .uri(getDeliveryReports,enterpriseId)
+                        .exchange()
+                        .flatMap(response -> response.toEntityList(SupplierPerformance.class))
+                        .block();
     }
 
 }
