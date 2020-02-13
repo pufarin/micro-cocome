@@ -1,6 +1,7 @@
 package net.gabrielkovacs.apigateway.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -80,4 +81,7 @@ public class ApiGatewayServices {
                         .block();
     }
 
+    public String generateCorrelationId(){
+        return UUID.randomUUID().toString();
+    }
 }

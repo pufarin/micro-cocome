@@ -1,12 +1,13 @@
 package net.gabrielkovacs.apigateway.controller;
 
+import net.gabrielkovacs.apigateway.entities.ClientCallBack;
+import net.gabrielkovacs.apigateway.repository.ClientCallBackRepository;
+import net.gabrielkovacs.apigateway.services.MessageProducer;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.ClientResponse;
 
 import net.gabrielkovacs.apigateway.models.OrderDeliveryDate;
 import net.gabrielkovacs.apigateway.models.ProductOrder;
 import net.gabrielkovacs.apigateway.models.StockItem;
-import net.gabrielkovacs.apigateway.models.StockItemReport;
 import net.gabrielkovacs.apigateway.models.SubmitedOrder;
 import net.gabrielkovacs.apigateway.models.SupplierPerformance;
 import net.gabrielkovacs.apigateway.services.ApiGatewayServices;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -26,10 +28,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class GatewayController {
 
     private ApiGatewayServices apiGatewayServices;
+    private ClientCallBackRepository clientCallBackRepository;
+    private MessageProducer messageProducer;
 
-    public GatewayController (ApiGatewayServices apiGatewayServices){
+    public GatewayController(ApiGatewayServices apiGatewayServices, ClientCallBackRepository clientCallBackRepository, MessageProducer messageProducer){
         this.apiGatewayServices = apiGatewayServices;
-
+        this.clientCallBackRepository = clientCallBackRepository;
+        this.messageProducer = messageProducer;
     }
 
     @PostMapping("stores/{storeId}/orders")
@@ -37,10 +42,18 @@ public class GatewayController {
                 
         return apiGatewayServices.submitProductOrder(submitedOrder, storeId);
     }
-    
+ /*
     @GetMapping("stores/{storeId}/stock-item-reports")
     public ResponseEntity<List<StockItemReport>> getStockItemReports(@PathVariable Long storeId){
         return apiGatewayServices.getStockItemReports(storeId);
+    }
+*/
+    @GetMapping("stores/{storeId}/stock-item-reports")
+    public String getStockItemReports(@PathVariable Long storeId, @RequestParam String call_back){
+        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back);
+        clientCallBackRepository.save(clientCallBack);
+        messageProducer.sendMessageToShowStockReports("Get me the stock reports for " + storeId);
+        return "Store ID: " + storeId + "Call Back: " + call_back;
     }
 
     @PutMapping("stores/{storeId}/stockitems/{stockItemId}")
