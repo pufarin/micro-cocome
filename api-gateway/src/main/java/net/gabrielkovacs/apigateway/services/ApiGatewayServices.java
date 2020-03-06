@@ -3,6 +3,11 @@ package net.gabrielkovacs.apigateway.services;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import net.gabrielkovacs.apigateway.entities.ClientCallBack;
+import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -83,5 +88,32 @@ public class ApiGatewayServices {
 
     public String generateCorrelationId(){
         return UUID.randomUUID().toString();
+    }
+
+    public String clientCallBackToJSON(ClientCallBack clientCallBack){
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            return mapper.writeValueAsString(clientCallBack);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public String generateJSONStringFromClass(ClientCallBack clientCallBack){
+        Gson gson = new Gson();
+        return  gson.toJson(clientCallBack);
+    }
+
+
+    public String generateJSONString(ClientCallBack clientCallBack){
+        JSONObject obj = new JSONObject();
+        obj.put("uuid", clientCallBack.getUuid());
+        obj.put("timestamp", clientCallBack.getTimeStamp());
+        obj.put("eventName", clientCallBack.getEventName());
+        obj.put("parameter", clientCallBack.getParameter());
+        return  obj.toString();
     }
 }

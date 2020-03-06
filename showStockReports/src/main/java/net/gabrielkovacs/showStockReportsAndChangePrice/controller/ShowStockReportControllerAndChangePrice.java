@@ -26,7 +26,8 @@ class ShowStockReportControllerAndChangePrice {
     public ShowStockReportControllerAndChangePrice(StockItemRepository stockItemReportRepository){
         this.stockItemRepository = stockItemReportRepository;
     }
-    
+
+
     @Operation(summary = "UC5 Show Stock Reports", description = "Returns a Stock Item Report for a given store id")
     @GetMapping("stockitemreport/{storeId}")
     public ResponseEntity<List<StockItemReport>> getStoreItemReport(@PathVariable long storeId){

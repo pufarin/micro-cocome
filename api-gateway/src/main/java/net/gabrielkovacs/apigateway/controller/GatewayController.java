@@ -3,6 +3,8 @@ package net.gabrielkovacs.apigateway.controller;
 import net.gabrielkovacs.apigateway.entities.ClientCallBack;
 import net.gabrielkovacs.apigateway.repository.ClientCallBackRepository;
 import net.gabrielkovacs.apigateway.services.MessageProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.gabrielkovacs.apigateway.models.OrderDeliveryDate;
@@ -12,6 +14,9 @@ import net.gabrielkovacs.apigateway.models.SubmitedOrder;
 import net.gabrielkovacs.apigateway.models.SupplierPerformance;
 import net.gabrielkovacs.apigateway.services.ApiGatewayServices;
 
+import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -30,6 +35,9 @@ public class GatewayController {
     private ApiGatewayServices apiGatewayServices;
     private ClientCallBackRepository clientCallBackRepository;
     private MessageProducer messageProducer;
+
+    Logger log = LoggerFactory.getLogger(GatewayController.class);
+
 
     public GatewayController(ApiGatewayServices apiGatewayServices, ClientCallBackRepository clientCallBackRepository, MessageProducer messageProducer){
         this.apiGatewayServices = apiGatewayServices;
@@ -50,10 +58,16 @@ public class GatewayController {
 */
     @GetMapping("stores/{storeId}/stock-item-reports")
     public String getStockItemReports(@PathVariable Long storeId, @RequestParam String call_back){
-        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back);
+        Date date= new Date();
+        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back,
+                                        new Timestamp( date.getTime()),"returnStockItemReports", storeId.toString());
         clientCallBackRepository.save(clientCallBack);
-        messageProducer.sendMessageToShowStockReports("Get me the stock reports for " + storeId);
-        return "Store ID: " + storeId + "Call Back: " + call_back;
+//        messageProducer.sendMessageToShowStockReports(apiGatewayServices.generateJSONString(clientCallBack));
+//        log.info("Get StockItemReport Message: {}", apiGatewayServices.generateJSONString(clientCallBack));
+
+        messageProducer.sendMessageToShowStockReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
+        log.info("Get StockItemReport Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
+        return "Store ID: " + storeId + "Call Back: " + call_back + "message: " + apiGatewayServices.generateJSONString(clientCallBack);
     }
 
     @PutMapping("stores/{storeId}/stockitems/{stockItemId}")

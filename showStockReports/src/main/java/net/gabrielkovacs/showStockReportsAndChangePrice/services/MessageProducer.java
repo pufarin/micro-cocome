@@ -1,8 +1,6 @@
-package net.gabrielkovacs.apigateway.services;
+package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
-import net.gabrielkovacs.apigateway.entities.ClientCallBack;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +10,21 @@ public class MessageProducer {
     //@Autowired
     private JmsTemplate jmsTemplate;
     private ActiveMQQueue showStockReportsQueue;
+    private ActiveMQQueue apiGatewayQueue;
 
     //@Autowired
-    public MessageProducer(JmsTemplate jmsTemplate, ActiveMQQueue showStockReportsQueue){
+    public MessageProducer(JmsTemplate jmsTemplate, ActiveMQQueue showStockReportsQueue, ActiveMQQueue apiGatewayQueue){
         this.jmsTemplate = jmsTemplate;
         this.showStockReportsQueue = showStockReportsQueue;
+        this.apiGatewayQueue = apiGatewayQueue;
     }
 
     public void sendMessageToShowStockReports(String clientCallBack){
         jmsTemplate.convertAndSend(showStockReportsQueue,clientCallBack);
     }
+
+    public void sendMessageToApiGateway(String message){
+        jmsTemplate.convertAndSend(apiGatewayQueue, message);
+    }
+
 }
