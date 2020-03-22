@@ -84,19 +84,12 @@ class ShowStockReportControllerAndChangePrice {
 
     @Operation(summary = "UC7 Change Stock Item Price ", description = "Updates the price of a stockItem based on the provided data")
     @PutMapping("stockitem/store/{storeId}/{stockItemId}")
-    /*
     void updatePrice(@RequestBody StockItem newStockItem, @PathVariable Long storeId, @PathVariable Long stockItemId){
         Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
         queryResult.ifPresent(stockItem ->{stockItem.setSalePrice(newStockItem.getSalePrice());
             stockItemRepository.save(stockItem);
         });
     }
-    */
-    public ResponseEntity<?> updatePrice(@RequestBody StockItem newStockItem, @PathVariable Long storeId, @PathVariable Long stockItemId){
-        Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
-        queryResult.ifPresent(stockItem ->{stockItem.setSalePrice(newStockItem.getSalePrice());
-            stockItemRepository.save(stockItem);
-        });
-        return ResponseEntity.ok().build();
-    }
+
+
 }

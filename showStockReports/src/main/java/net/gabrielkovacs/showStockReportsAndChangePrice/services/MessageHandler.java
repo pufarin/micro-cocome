@@ -1,9 +1,6 @@
 package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.ClientCallBack;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.QueryResponse;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.ReportEntry;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItemReport;
+import net.gabrielkovacs.showStockReportsAndChangePrice.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,7 +30,7 @@ public class MessageHandler {
         Date date= new Date();
         switch (eventName){
             case("returnStockItemReports"):
-                log.info("Allready in the switch {}", eventName);
+                log.info("Already in the returnStockItemReports {}", eventName);
 
                 List<ReportEntry> reportEntries = showStockReportsService.retrieveStockItemReportForStore(Long.parseLong(clientCallBack.getParameter()));
                 String responsePayload = messageManipulation.convertListOfReportEntryToString(reportEntries);
@@ -43,8 +40,10 @@ public class MessageHandler {
                // log.info("This is the query response as string {} ",messageManipulation.convertQueryResponseToString(queryResponse));
 
                 break;
-            case("bla"):
-                log.info("Bla, bla");
+            case("changeStockItemPrice"):
+                log.info("Already in the changeStockItemPrice {}", clientCallBack.toString());
+                StockItem stockItem = messageManipulation.convertStringToStockItemObject(clientCallBack.getParameter());
+                showStockReportsService.changeStockItemPrice(stockItem.getId(), stockItem.getSalePrice());
                 break;
         }
     }

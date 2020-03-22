@@ -1,5 +1,6 @@
 package net.gabrielkovacs.apigateway.controller;
 
+import com.google.gson.Gson;
 import net.gabrielkovacs.apigateway.entities.ClientCallBack;
 import net.gabrielkovacs.apigateway.repository.ClientCallBackRepository;
 import net.gabrielkovacs.apigateway.services.MessageProducer;
@@ -35,7 +36,7 @@ public class GatewayController {
     private ApiGatewayServices apiGatewayServices;
     private ClientCallBackRepository clientCallBackRepository;
     private MessageProducer messageProducer;
-
+    private Gson gson = new Gson();
     Logger log = LoggerFactory.getLogger(GatewayController.class);
 
 
@@ -70,12 +71,31 @@ public class GatewayController {
         return "Store ID: " + storeId + "Call Back: " + call_back + "message: " + apiGatewayServices.generateJSONString(clientCallBack);
     }
 
-    @PutMapping("stores/{storeId}/stockitems/{stockItemId}")
+ /*   @PutMapping("stores/{storeId}/stockitems/{stockItemId}")
     public ResponseEntity<StockItem> chengeSrockItemPrice(@PathVariable Long storeId,@PathVariable Long stockItemId, @RequestBody StockItem stockItem) {
                
         return apiGatewayServices.changeProductPrice(storeId, stockItemId, stockItem);
 
-    }    
+    }*/
+
+    @PutMapping("stores/{storeId}/stockitems/{stockItemId}")
+    public String chengeSrockItemPrice(@PathVariable Long storeId,@PathVariable Long stockItemId, @RequestBody StockItem stockItem, @RequestParam String call_back) {
+        Date date= new Date();
+
+        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(),call_back,
+                                        new Timestamp( date.getTime()),"changeStockItemPrice",
+                                        gson.toJson(stockItem));
+
+        clientCallBackRepository.save(clientCallBack);
+
+        messageProducer.sendMessageToShowStockReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
+        log.info("Get StockItemReport Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
+        return "Store ID: " + storeId + "Call Back: " + call_back + "message: " + gson.toJson(clientCallBack);
+
+    }
+
+
+
     @PutMapping("stores/{storeId}/orders/{orderId}")
     public ResponseEntity<OrderDeliveryDate> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
         return apiGatewayServices.receiveOrder(orderDeliveryDate, orderId);

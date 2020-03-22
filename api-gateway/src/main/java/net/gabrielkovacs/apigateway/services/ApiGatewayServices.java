@@ -108,6 +108,8 @@ public class ApiGatewayServices {
     }
 
 
+
+
     public String generateJSONString(ClientCallBack clientCallBack){
         JSONObject obj = new JSONObject();
         obj.put("uuid", clientCallBack.getUuid());

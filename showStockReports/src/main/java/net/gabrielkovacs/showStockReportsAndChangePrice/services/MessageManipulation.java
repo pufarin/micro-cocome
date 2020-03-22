@@ -2,10 +2,7 @@ package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
 
 import com.google.gson.Gson;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.ClientCallBack;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.QueryResponse;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.ReportEntry;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItemReport;
+import net.gabrielkovacs.showStockReportsAndChangePrice.entities.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +15,10 @@ public class MessageManipulation {
 
     public ClientCallBack convertStringToJSONObject(String message){
         return g.fromJson(message, ClientCallBack.class);
+    }
+
+    public StockItem convertStringToStockItemObject(String message){
+        return g.fromJson(message, StockItem.class);
     }
 
     public String convertListOfReportEntryToString(List<ReportEntry> result){

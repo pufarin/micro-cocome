@@ -1,6 +1,7 @@
 package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.ReportEntry;
+import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItem;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItemReport;
 import net.gabrielkovacs.showStockReportsAndChangePrice.repository.StockItemRepository;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,5 +32,13 @@ public class ShowStockReportsService {
     private ReportEntry mapStockItemReportToReportEntry(StockItemReport stockItemReport){
         return new ReportEntry(stockItemReport.getID(),stockItemReport.getAmount(), stockItemReport.getMinStock(),
                 stockItemReport.getMaxStock());
+    }
+
+    public void changeStockItemPrice(Long stockItemId, Double newSalesPrice){
+        Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
+        queryResult.ifPresent(stockItem ->{stockItem.setSalePrice(newSalesPrice);
+            stockItemRepository.save(stockItem);
+        });
+
     }
 }
