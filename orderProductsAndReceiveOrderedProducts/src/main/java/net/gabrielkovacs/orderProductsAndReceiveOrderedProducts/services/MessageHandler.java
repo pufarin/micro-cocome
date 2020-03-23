@@ -1,11 +1,9 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ClientCallBack;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.IncomingProductOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.QueryResponse;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -42,8 +40,16 @@ public class MessageHandler {
                 QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()));
                 messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
                 break;
-            case("changeStockItemPrice"):
-                log.info("Already in the changeStockItemPrice {}", clientCallBack.toString());
+            case("receiveOrder"):
+                log.info("Already in the receive order {}", clientCallBack.toString());
+
+                ReceivedOrder receivedOrder = messageManipulation.getReceivedOrderFromJson(clientCallBack.getParameter());
+
+                ResponseEntity<?> responseEntity = orderProductService.updateProductOrderDeliveryDate(receivedOrder,receivedOrder.getOrderId());
+
+                String responsePayloadReceivedOrder = messageManipulation.convertResponseToString(responseEntity);
+                QueryResponse queryResponseReceivedOrder = new QueryResponse(responsePayloadReceivedOrder,clientCallBack.getUuid(),new Timestamp( date.getTime()));
+                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
 
                 break;
         }

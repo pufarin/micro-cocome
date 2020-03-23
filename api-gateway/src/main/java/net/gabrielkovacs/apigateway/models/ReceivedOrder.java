@@ -1,17 +1,14 @@
-package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities;
+package net.gabrielkovacs.apigateway.models;
 
 import java.sql.Date;
 
 public class ReceivedOrder {
 
     private Date deliveryDate;
-    private int storeId;
-    private int orderId;
+    private long storeId;
+    private long orderId;
 
-    public ReceivedOrder() {
-    }
-
-    public ReceivedOrder(Date deliveryDate, int storeId, int orderId) {
+    public ReceivedOrder(Date deliveryDate, long storeId, long orderId) {
         this.deliveryDate = deliveryDate;
         this.storeId = storeId;
         this.orderId = orderId;
@@ -25,7 +22,7 @@ public class ReceivedOrder {
         this.deliveryDate = deliveryDate;
     }
 
-    public int getStoreId() {
+    public long getStoreId() {
         return storeId;
     }
 
@@ -33,7 +30,7 @@ public class ReceivedOrder {
         this.storeId = storeId;
     }
 
-    public int getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 

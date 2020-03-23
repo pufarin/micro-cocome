@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import net.gabrielkovacs.apigateway.services.ApiGatewayServices;
 
 import java.sql.Timestamp;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -53,14 +52,14 @@ public class GatewayController {
                                                     @RequestParam String call_back) {
         Date date= new Date();
         SubmitedOrderWithStoreId submitedOrderWithStoreId = new SubmitedOrderWithStoreId(submitedOrder.getAmount(),
-                                                            submitedOrder.getAmount(), storeId);
+                                                            submitedOrder.getProductId(), storeId);
         ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back,
                 new Timestamp( date.getTime()),"orderProduct", gson.toJson(submitedOrderWithStoreId));
 
         clientCallBackRepository.save(clientCallBack);
 
         messageProducer.sendMessageToOrderProductsAndReceiveOrderedProducts(gson.toJson(clientCallBack));
-        log.info("Get StockItemReport Message: {}", gson.toJson(clientCallBack));
+        log.info("Create new product order: {}", gson.toJson(clientCallBack));
         return "Store ID: " + storeId + "Call Back: " + call_back + "message: " + gson.toJson(clientCallBack);
 
 
@@ -108,14 +107,30 @@ public class GatewayController {
 
     }
 
-
+/*
 
     @PutMapping("stores/{storeId}/orders/{orderId}")
     public ResponseEntity<OrderDeliveryDate> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
         return apiGatewayServices.receiveOrder(orderDeliveryDate, orderId);
-        
+
     }
-        
+*/
+    @PutMapping("stores/{storeId}/orders/{orderId}")
+    public String receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate, @RequestParam String call_back) {
+        Date date= new Date();
+
+        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(),call_back,
+                new Timestamp( date.getTime()),"receiveOrder",
+                gson.toJson(new ReceivedOrder(orderDeliveryDate.getDeliveryDate(), storeId, orderId )));
+
+        clientCallBackRepository.save(clientCallBack);
+
+        messageProducer.sendMessageToOrderProductsAndReceiveOrderedProducts(gson.toJson(clientCallBack));
+        log.info("Received order for product: {}", gson.toJson(clientCallBack));
+        return "Store ID: " + storeId.toString() + "Call Back: " + call_back + "message: " + gson.toJson(clientCallBack);
+
+    }
+
     @GetMapping("enterprises/{enterpriseId}/delivery-reports")
     public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(@PathVariable Long enterpriseId){
         return apiGatewayServices.getDeliveryReports(enterpriseId);

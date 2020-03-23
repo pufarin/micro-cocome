@@ -2,10 +2,8 @@ package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
 
 import com.google.gson.Gson;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ClientCallBack;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.IncomingProductOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.QueryResponse;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +26,13 @@ public class MessageManipulation {
 
     public String convertOrderEntryToString(OrderEntry orderEntry) {return g.toJson(orderEntry);}
 
+    public String convertResponseToString(ResponseEntity<?> responseEntity) {return  g.toJson(responseEntity);}
+
     public IncomingProductOrder getIncomingProductOrderFromJSON(String data){
         return g.fromJson(data, IncomingProductOrder.class);
+    }
+
+    public ReceivedOrder getReceivedOrderFromJson(String data){
+        return g.fromJson(data, ReceivedOrder.class);
     }
 }
