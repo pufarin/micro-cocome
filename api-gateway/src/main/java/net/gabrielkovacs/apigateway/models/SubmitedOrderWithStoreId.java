@@ -1,19 +1,20 @@
 package net.gabrielkovacs.apigateway.models;
 
-public class SubmitedOrder {
+public class SubmitedOrderWithStoreId {
 
     private Long amount;
     private Long productId;
+    private Long storeId;
 
 
-
-    public SubmitedOrder() {
+    public SubmitedOrderWithStoreId() {
     }
 
 
-    public SubmitedOrder(Long amount, Long productId) {
+    public SubmitedOrderWithStoreId(Long amount, Long productId, Long storeId) {
         this.amount = amount;
         this.productId = productId;
+        this.storeId = storeId;
     }
 
 
@@ -31,6 +32,14 @@ public class SubmitedOrder {
 
     public void setProductId(Long productId) {
         this.productId = productId;
+    }
+
+    public Long getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
 }

@@ -12,14 +12,21 @@ public class MessageProducer {
     //@Autowired
     private JmsTemplate jmsTemplate;
     private ActiveMQQueue showStockReportsQueue;
+    private ActiveMQQueue orderReceiveProductsQueue;
 
     //@Autowired
-    public MessageProducer(JmsTemplate jmsTemplate, ActiveMQQueue showStockReportsQueue){
+    public MessageProducer(JmsTemplate jmsTemplate, ActiveMQQueue showStockReportsQueue,
+                           ActiveMQQueue orderReceiveProductsQueue) {
         this.jmsTemplate = jmsTemplate;
         this.showStockReportsQueue = showStockReportsQueue;
+        this.orderReceiveProductsQueue = orderReceiveProductsQueue;
     }
 
     public void sendMessageToShowStockReports(String clientCallBack){
         jmsTemplate.convertAndSend(showStockReportsQueue,clientCallBack);
+    }
+
+    public void sendMessageToOrderProductsAndReceiveOrderedProducts(String clientCallBack){
+        jmsTemplate.convertAndSend(orderReceiveProductsQueue,clientCallBack);
     }
 }

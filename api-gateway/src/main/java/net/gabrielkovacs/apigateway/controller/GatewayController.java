@@ -2,17 +2,13 @@ package net.gabrielkovacs.apigateway.controller;
 
 import com.google.gson.Gson;
 import net.gabrielkovacs.apigateway.entities.ClientCallBack;
+import net.gabrielkovacs.apigateway.models.*;
 import net.gabrielkovacs.apigateway.repository.ClientCallBackRepository;
 import net.gabrielkovacs.apigateway.services.MessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.gabrielkovacs.apigateway.models.OrderDeliveryDate;
-import net.gabrielkovacs.apigateway.models.ProductOrder;
-import net.gabrielkovacs.apigateway.models.StockItem;
-import net.gabrielkovacs.apigateway.models.SubmitedOrder;
-import net.gabrielkovacs.apigateway.models.SupplierPerformance;
 import net.gabrielkovacs.apigateway.services.ApiGatewayServices;
 
 import java.sql.Timestamp;
@@ -45,11 +41,29 @@ public class GatewayController {
         this.clientCallBackRepository = clientCallBackRepository;
         this.messageProducer = messageProducer;
     }
-
+/*
     @PostMapping("stores/{storeId}/orders")
     public ResponseEntity<ProductOrder> createOrder(@RequestBody SubmitedOrder submitedOrder, @PathVariable Long storeId) {
                 
         return apiGatewayServices.submitProductOrder(submitedOrder, storeId);
+    }
+*/
+    @PostMapping("stores/{storeId}/orders")
+    public String createOrder(@RequestBody SubmitedOrder submitedOrder, @PathVariable Long storeId,
+                                                    @RequestParam String call_back) {
+        Date date= new Date();
+        SubmitedOrderWithStoreId submitedOrderWithStoreId = new SubmitedOrderWithStoreId(submitedOrder.getAmount(),
+                                                            submitedOrder.getAmount(), storeId);
+        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back,
+                new Timestamp( date.getTime()),"orderProduct", gson.toJson(submitedOrderWithStoreId));
+
+        clientCallBackRepository.save(clientCallBack);
+
+        messageProducer.sendMessageToOrderProductsAndReceiveOrderedProducts(gson.toJson(clientCallBack));
+        log.info("Get StockItemReport Message: {}", gson.toJson(clientCallBack));
+        return "Store ID: " + storeId + "Call Back: " + call_back + "message: " + gson.toJson(clientCallBack);
+
+
     }
  /*
     @GetMapping("stores/{storeId}/stock-item-reports")
