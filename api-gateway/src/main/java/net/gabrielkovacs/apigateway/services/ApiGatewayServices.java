@@ -107,9 +107,6 @@ public class ApiGatewayServices {
         return  gson.toJson(clientCallBack);
     }
 
-
-
-
     public String generateJSONString(ClientCallBack clientCallBack){
         JSONObject obj = new JSONObject();
         obj.put("uuid", clientCallBack.getUuid());
@@ -117,5 +114,11 @@ public class ApiGatewayServices {
         obj.put("eventName", clientCallBack.getEventName());
         obj.put("parameter", clientCallBack.getParameter());
         return  obj.toString();
+    }
+
+    public ResponseEntity<ClientCallBack> sendDataToCallbackAddress(String callBackURL, ClientCallBack clientCallBack){
+        setWebClientBaseUri(callBackURL);
+        return webClient.post().bodyValue(clientCallBack).exchange()
+                .flatMap(response -> response.toEntity(ClientCallBack.class)).block();
     }
 }
