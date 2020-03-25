@@ -46,7 +46,6 @@ public class MessageHandler {
                 ReceivedOrder receivedOrder = messageManipulation.getReceivedOrderFromJson(clientCallBack.getParameter());
 
                 ResponseEntity<?> responseEntity = orderProductService.updateProductOrderDeliveryDate(receivedOrder,receivedOrder.getOrderId());
-
                 String responsePayloadReceivedOrder = messageManipulation.convertResponseToString(responseEntity);
                 QueryResponse queryResponseReceivedOrder = new QueryResponse(responsePayloadReceivedOrder,clientCallBack.getUuid(),new Timestamp( date.getTime()));
                 messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));

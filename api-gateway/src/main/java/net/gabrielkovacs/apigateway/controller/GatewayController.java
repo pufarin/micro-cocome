@@ -130,10 +130,23 @@ public class GatewayController {
         return "Store ID: " + storeId.toString() + "Call Back: " + call_back + "message: " + gson.toJson(clientCallBack);
 
     }
-
+/*
     @GetMapping("enterprises/{enterpriseId}/delivery-reports")
     public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(@PathVariable Long enterpriseId){
         return apiGatewayServices.getDeliveryReports(enterpriseId);
     }
-    
+  */
+    @GetMapping("enterprises/{enterpriseId}/delivery-reports")
+    public String getDeliveryReports(@PathVariable Long enterpriseId, @RequestParam String call_back){
+        Date date= new Date();
+
+        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back,
+                new Timestamp( date.getTime()),"returnDeliveryReports", enterpriseId.toString());
+        clientCallBackRepository.save(clientCallBack);
+
+        messageProducer.sendMessageToShowDeliveryReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
+        log.info("Get DeliveryReports Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
+        return "Enterprose ID: " + enterpriseId + "Call Back: " + call_back + "message: " + apiGatewayServices.generateJSONString(clientCallBack);
+
+    }
 }

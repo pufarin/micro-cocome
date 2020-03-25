@@ -1,9 +1,9 @@
-package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.consumer;
+package net.gabrielkovacs.showDeliveryReports.consumer;
 
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ClientCallBack;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services.MessageHandler;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services.MessageManipulation;
+import net.gabrielkovacs.showDeliveryReports.entities.ClientCallBack;
+import net.gabrielkovacs.showDeliveryReports.services.MessageHandler;
+import net.gabrielkovacs.showDeliveryReports.services.MessageManipulation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -22,12 +22,11 @@ public class Consumer {
 
     }
 
-    @JmsListener(destination = "order_receive_products")
-    public void consume(String message){
-        log.info("Received Message in orderProductsAnsReceiveOrder: {}", message);
+    @JmsListener(destination = "show_delivery_reports")
+    public void cosume(String message){
+        log.info("Received Message in ShowStockReports: {}", message);
         ClientCallBack clientCallBack = messageManipulation.convertStringToJSONObject(message);
         messageHandler.cosumeMessage(clientCallBack);
-
     }
 }
 

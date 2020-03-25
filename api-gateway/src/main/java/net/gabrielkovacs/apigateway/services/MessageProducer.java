@@ -1,8 +1,6 @@
 package net.gabrielkovacs.apigateway.services;
 
-import net.gabrielkovacs.apigateway.entities.ClientCallBack;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +11,15 @@ public class MessageProducer {
     private JmsTemplate jmsTemplate;
     private ActiveMQQueue showStockReportsQueue;
     private ActiveMQQueue orderReceiveProductsQueue;
+    private ActiveMQQueue showDeliveryReportsQueue;
 
     //@Autowired
     public MessageProducer(JmsTemplate jmsTemplate, ActiveMQQueue showStockReportsQueue,
-                           ActiveMQQueue orderReceiveProductsQueue) {
+                           ActiveMQQueue orderReceiveProductsQueue, ActiveMQQueue showDeliveryReportsQueue) {
         this.jmsTemplate = jmsTemplate;
         this.showStockReportsQueue = showStockReportsQueue;
         this.orderReceiveProductsQueue = orderReceiveProductsQueue;
+        this.showDeliveryReportsQueue = showDeliveryReportsQueue;
     }
 
     public void sendMessageToShowStockReports(String clientCallBack){
@@ -28,5 +28,9 @@ public class MessageProducer {
 
     public void sendMessageToOrderProductsAndReceiveOrderedProducts(String clientCallBack){
         jmsTemplate.convertAndSend(orderReceiveProductsQueue,clientCallBack);
+    }
+
+    public void sendMessageToShowDeliveryReports(String clientCallBack){
+        jmsTemplate.convertAndSend(showDeliveryReportsQueue, clientCallBack);
     }
 }
