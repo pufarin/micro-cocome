@@ -40,15 +40,9 @@ public class GatewayController {
         this.clientCallBackRepository = clientCallBackRepository;
         this.messageProducer = messageProducer;
     }
-/*
+
     @PostMapping("stores/{storeId}/orders")
-    public ResponseEntity<ProductOrder> createOrder(@RequestBody SubmitedOrder submitedOrder, @PathVariable Long storeId) {
-                
-        return apiGatewayServices.submitProductOrder(submitedOrder, storeId);
-    }
-*/
-    @PostMapping("stores/{storeId}/orders")
-    public String createOrder(@RequestBody SubmitedOrder submitedOrder, @PathVariable Long storeId,
+    public ResponseEntity createOrder(@RequestBody SubmitedOrder submitedOrder, @PathVariable Long storeId,
                                                     @RequestParam String call_back) {
         Date date= new Date();
         SubmitedOrderWithStoreId submitedOrderWithStoreId = new SubmitedOrderWithStoreId(submitedOrder.getAmount(),
@@ -60,8 +54,8 @@ public class GatewayController {
 
         messageProducer.sendMessageToOrderProductsAndReceiveOrderedProducts(gson.toJson(clientCallBack));
         log.info("Create new product order: {}", gson.toJson(clientCallBack));
-        return "Store ID: " + storeId + "Call Back: " + call_back + "message: " + gson.toJson(clientCallBack);
 
+        return ResponseEntity.accepted().build();
 
     }
 
@@ -95,16 +89,8 @@ public class GatewayController {
 
     }
 
-/*
-
     @PutMapping("stores/{storeId}/orders/{orderId}")
-    public ResponseEntity<OrderDeliveryDate> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
-        return apiGatewayServices.receiveOrder(orderDeliveryDate, orderId);
-
-    }
-*/
-    @PutMapping("stores/{storeId}/orders/{orderId}")
-    public String receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate, @RequestParam String call_back) {
+    public ResponseEntity receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate, @RequestParam String call_back) {
         Date date= new Date();
 
         ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(),call_back,
@@ -115,17 +101,12 @@ public class GatewayController {
 
         messageProducer.sendMessageToOrderProductsAndReceiveOrderedProducts(gson.toJson(clientCallBack));
         log.info("Received order for product: {}", gson.toJson(clientCallBack));
-        return "Store ID: " + storeId.toString() + "Call Back: " + call_back + "message: " + gson.toJson(clientCallBack);
+        return ResponseEntity.accepted().build();
 
     }
-/*
+
     @GetMapping("enterprises/{enterpriseId}/delivery-reports")
-    public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(@PathVariable Long enterpriseId){
-        return apiGatewayServices.getDeliveryReports(enterpriseId);
-    }
-  */
-    @GetMapping("enterprises/{enterpriseId}/delivery-reports")
-    public String getDeliveryReports(@PathVariable Long enterpriseId, @RequestParam String call_back){
+    public ResponseEntity getDeliveryReports(@PathVariable Long enterpriseId, @RequestParam String call_back){
         Date date= new Date();
 
         ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back,
@@ -134,7 +115,6 @@ public class GatewayController {
 
         messageProducer.sendMessageToShowDeliveryReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
         log.info("Get DeliveryReports Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
-        return "Enterprose ID: " + enterpriseId + "Call Back: " + call_back + "message: " + apiGatewayServices.generateJSONString(clientCallBack);
-
+        return ResponseEntity.accepted().build();
     }
 }
