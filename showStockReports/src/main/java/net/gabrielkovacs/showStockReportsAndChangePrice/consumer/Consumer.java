@@ -25,7 +25,6 @@ public class Consumer {
     public void cosume(String message){
         log.info("Received Message in ShowStockReports: {}", message);
         ClientCallBack clientCallBack = messageManipulation.convertStringToJSONObject(message);
-        String eventName = clientCallBack.getEventName();
         messageHandler.cosumeMessage(clientCallBack);
     }
 }

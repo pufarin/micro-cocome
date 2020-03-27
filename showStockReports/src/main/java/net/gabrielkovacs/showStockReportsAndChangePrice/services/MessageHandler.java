@@ -3,6 +3,7 @@ package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -43,7 +44,13 @@ public class MessageHandler {
             case("changeStockItemPrice"):
                 log.info("Already in the changeStockItemPrice {}", clientCallBack.toString());
                 StockItem stockItem = messageManipulation.convertStringToStockItemObject(clientCallBack.getParameter());
-                showStockReportsService.changeStockItemPrice(stockItem.getId(), stockItem.getSalePrice());
+                ResponseEntity<StockItem> responseEntity = showStockReportsService.changeStockItemPrice(stockItem.getId(), stockItem.getSalePrice());
+                log.info("This is the ResponseEntity {}:", responseEntity );
+                String responsePayload1 = messageManipulation.convertResponseEntityToString(responseEntity);
+                QueryResponse queryResponse1 = new QueryResponse(responsePayload1,clientCallBack.getUuid(),new Timestamp( date.getTime()));
+                log.info("This is the query response {} ", queryResponse1.toString());
+                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse1));
+
                 break;
         }
     }

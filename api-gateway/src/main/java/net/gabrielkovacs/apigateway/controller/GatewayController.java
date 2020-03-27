@@ -64,35 +64,22 @@ public class GatewayController {
 
 
     }
- /*
+
     @GetMapping("stores/{storeId}/stock-item-reports")
-    public ResponseEntity<List<StockItemReport>> getStockItemReports(@PathVariable Long storeId){
-        return apiGatewayServices.getStockItemReports(storeId);
-    }
-*/
-    @GetMapping("stores/{storeId}/stock-item-reports")
-    public String getStockItemReports(@PathVariable Long storeId, @RequestParam String call_back){
+    public ResponseEntity getStockItemReports(@PathVariable Long storeId, @RequestParam String call_back){
         Date date= new Date();
         ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back,
                                         new Timestamp( date.getTime()),"returnStockItemReports", storeId.toString());
         clientCallBackRepository.save(clientCallBack);
-//        messageProducer.sendMessageToShowStockReports(apiGatewayServices.generateJSONString(clientCallBack));
-//        log.info("Get StockItemReport Message: {}", apiGatewayServices.generateJSONString(clientCallBack));
 
         messageProducer.sendMessageToShowStockReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
         log.info("Get StockItemReport Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
-        return "Store ID: " + storeId + "Call Back: " + call_back + "message: " + apiGatewayServices.generateJSONString(clientCallBack);
+
+        return ResponseEntity.accepted().build();
     }
 
- /*   @PutMapping("stores/{storeId}/stockitems/{stockItemId}")
-    public ResponseEntity<StockItem> chengeSrockItemPrice(@PathVariable Long storeId,@PathVariable Long stockItemId, @RequestBody StockItem stockItem) {
-               
-        return apiGatewayServices.changeProductPrice(storeId, stockItemId, stockItem);
-
-    }*/
-
     @PutMapping("stores/{storeId}/stockitems/{stockItemId}")
-    public String chengeSrockItemPrice(@PathVariable Long storeId,@PathVariable Long stockItemId, @RequestBody StockItem stockItem, @RequestParam String call_back) {
+    public ResponseEntity chengeSrockItemPrice(@PathVariable Long storeId, @PathVariable Long stockItemId, @RequestBody StockItem stockItem, @RequestParam String call_back) {
         Date date= new Date();
 
         ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(),call_back,
@@ -102,8 +89,9 @@ public class GatewayController {
         clientCallBackRepository.save(clientCallBack);
 
         messageProducer.sendMessageToShowStockReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
-        log.info("Get StockItemReport Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
-        return "Store ID: " + storeId + "Call Back: " + call_back + "message: " + gson.toJson(clientCallBack);
+        log.info("Change stock item price Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
+
+        return ResponseEntity.accepted().build();
 
     }
 

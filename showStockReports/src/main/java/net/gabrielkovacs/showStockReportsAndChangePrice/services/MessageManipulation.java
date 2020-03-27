@@ -3,6 +3,7 @@ package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
 import com.google.gson.Gson;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,9 +27,9 @@ public class MessageManipulation {
          return g.toJson(result);
     }
 
-
-
     public String convertQueryResponseToString(QueryResponse queryResponse){
         return g.toJson(queryResponse);
     }
+
+    public String convertResponseEntityToString(ResponseEntity responseEntity) {return g.toJson(responseEntity);}
 }
