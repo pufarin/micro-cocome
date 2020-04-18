@@ -18,13 +18,35 @@ public class MessageManipulation {
         return g.fromJson(message, ClientCallBack.class);
     }
 
+    public ServiceBusMessageCommand getServiceBusMessageCommandFromJSON(String message){
+        return  g.fromJson(message, ServiceBusMessageCommand.class);
+    }
 
+    public ServiceBusMessageResponse getServiceBusMessageResponseFromJSON(String message){
+        return  g.fromJson(message, ServiceBusMessageResponse.class);
+    }
+
+    public StockItem convertStringToStockItem(String message){
+        return  g.fromJson(message, StockItem.class);
+    }
 
     public String convertQueryResponseToString(QueryResponse queryResponse){
         return g.toJson(queryResponse);
     }
 
+    public String convertServiceBusMessageCommandToString(ServiceBusMessageCommand serviceBusMessageCommand){
+        return g.toJson(serviceBusMessageCommand);
+    }
+
+    public String convertServiceBusMessageResponseToString(ServiceBusMessageResponse serviceBusMessageResponse){
+        return g.toJson(serviceBusMessageResponse);
+    }
+
+    public String convertStockItemToString(StockItem stockItem) { return  g.toJson(stockItem);}
+
     public String convertOrderEntryToString(OrderEntry orderEntry) {return g.toJson(orderEntry);}
+
+    public String convertProductDeliveryDurations(List<ProductDeliveryDuration> productDeliveryDurations) { return  g.toJson(productDeliveryDurations);}
 
     public String convertResponseToString(ResponseEntity<?> responseEntity) {return  g.toJson(responseEntity);}
 

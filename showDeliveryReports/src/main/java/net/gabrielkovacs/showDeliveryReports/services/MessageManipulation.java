@@ -2,11 +2,13 @@ package net.gabrielkovacs.showDeliveryReports.services;
 
 
 import com.google.gson.Gson;
-import net.gabrielkovacs.showDeliveryReports.entities.ClientCallBack;
-import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
-import net.gabrielkovacs.showDeliveryReports.entities.QueryResponse;
+import com.google.gson.JsonArray;
+import com.google.gson.reflect.TypeToken;
+import net.gabrielkovacs.showDeliveryReports.entities.*;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,5 +36,23 @@ public class MessageManipulation {
 
     public String convertQueryResponseToString(QueryResponse queryResponse){
         return g.toJson(queryResponse);
+    }
+
+    public String convertServiceBusMessageCommandToString(ServiceBusMessageCommand serviceBusMessageCommand){
+        return g.toJson(serviceBusMessageCommand);
+
+    }
+
+    public String convertListOfProductIdsToString(List<Long> productId){
+        return g.toJson(productId);
+    }
+
+    public ServiceBusMessageResponse getServiceBusMessageResponseFromJSON(String message){
+        return  g.fromJson(message, ServiceBusMessageResponse.class);
+    }
+
+    public List<ProductDeliveryDuration> convertJsonToProductDeliveryDurations(String document){
+        Type listType = new TypeToken<ArrayList<ProductDeliveryDuration>>() {}.getType();
+        return g.fromJson(document,listType );
     }
 }

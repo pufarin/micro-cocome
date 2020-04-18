@@ -1,8 +1,6 @@
 package net.gabrielkovacs.showDeliveryReports.services;
 
-import net.gabrielkovacs.showDeliveryReports.entities.ClientCallBack;
-import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
-import net.gabrielkovacs.showDeliveryReports.entities.QueryResponse;
+import net.gabrielkovacs.showDeliveryReports.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -48,5 +46,19 @@ public class MessageHandler {
 
                 break;
         }
+    }
+
+    public void consumeServiceBusMessageResponse(ServiceBusMessageResponse serviceBusMessageResponse){
+        log.info("I am in the ServiceBusMessageResponse handler,  {}", serviceBusMessageResponse.toString());
+        String eventName = serviceBusMessageResponse.getEventName();
+        Date date= new Date();
+        switch (eventName){
+            case("getDeliveryDurationPerProduct"):
+                List<ProductDeliveryDuration> productDeliveryDurations = messageManipulation.convertJsonToProductDeliveryDurations(serviceBusMessageResponse.getDocument());
+                List<DeliveryReport> deliveryReports = productDeliveryDurations.stream().map()
+
+                break;
+        }
+
     }
 }

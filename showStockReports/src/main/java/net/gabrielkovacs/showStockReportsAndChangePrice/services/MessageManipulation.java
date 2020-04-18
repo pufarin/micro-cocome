@@ -22,6 +22,14 @@ public class MessageManipulation {
         return g.fromJson(message, StockItem.class);
     }
 
+    public ServiceBusMessageCommand convertStringToServiceBusMessageCommand(String message){
+        return g.fromJson(message, ServiceBusMessageCommand.class);
+    }
+
+    public ServiceBusMessageCommand getServiceBusMessageCommandFromJSON(String message){
+        return  g.fromJson(message, ServiceBusMessageCommand.class);
+    }
+
     public String convertListOfReportEntryToString(List<ReportEntry> result){
 
          return g.toJson(result);
@@ -32,4 +40,10 @@ public class MessageManipulation {
     }
 
     public String convertResponseEntityToString(ResponseEntity responseEntity) {return g.toJson(responseEntity);}
+
+    public String convertStockItemToString(StockItem stockItem) { return  g.toJson(stockItem);}
+
+    public String convertServiceBusMessageResponseToString(ServiceBusMessageResponse serviceBusMessageResponse ){
+        return g.toJson(serviceBusMessageResponse);
+    }
 }

@@ -34,6 +34,16 @@ public class ArtemisConfiguration {
     }
 
     @Bean
+    public ActiveMQQueue serviceBusCommand(){
+        return new ActiveMQQueue("service_bus_command");
+    }
+
+    @Bean
+    public ActiveMQQueue serviceBusResponse(){
+        return new ActiveMQQueue("service_bus_response");
+    }
+
+    @Bean
     public ActiveMQConnectionFactory activeMQConnectionFactory(){
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerUrl);
         return factory;

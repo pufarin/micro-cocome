@@ -1,10 +1,8 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductDeliveryDuration;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.StockItem;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.OrderEntryRepository;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.ProductOrderRepository;
 import org.springframework.http.HttpStatus;
@@ -14,9 +12,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Service
 public class OrderProductService {
@@ -24,6 +21,7 @@ public class OrderProductService {
     // use 2 facades for entities and repository?
     private ProductOrderRepository productOrderRepository;
     private OrderEntryRepository orderEntryRepository;
+    private MessageManipulation messageManipulation;
     
     private final String baseUri = "http://localhost:8085";
     private final String getStockItemByStoreIdAnsProductId = "/stockitem?storeId={storeId}&productId={productId}";
@@ -31,9 +29,11 @@ public class OrderProductService {
 
     private WebClient webClient = WebClient.create(baseUri);
 
-    public OrderProductService(ProductOrderRepository productOrderRepository, OrderEntryRepository orderEntryRepository){
+    public OrderProductService(ProductOrderRepository productOrderRepository, OrderEntryRepository orderEntryRepository,
+                               MessageManipulation messageManipulation){
         this.productOrderRepository = productOrderRepository;
         this.orderEntryRepository = orderEntryRepository;
+        this.messageManipulation = messageManipulation;
     }
 
     public void setWebClientBaseUri(String baseUri){
@@ -111,7 +111,7 @@ public class OrderProductService {
                        // .bodyToMono(ResponseEntity.class)
                         .block();
     }
-
+/*
     public ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(List<Long> productsId){
         List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
         if(queryResult.isEmpty()){
@@ -120,4 +120,45 @@ public class OrderProductService {
 
         return ResponseEntity.ok().body(queryResult);
     }
+*/
+    public List<ProductDeliveryDuration> getDeliveryDurationPerProduct(List<Long> productsId){
+        List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
+        if(queryResult.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        return queryResult;
+    }
+
+    public String generateCorrelationId(){
+        return UUID.randomUUID().toString();
+    }
+
+    public ServiceBusMessageCommand generateGetStockItemCommandMessage(String correlationId, Long storeId, Long productId,
+                                                                       Timestamp timestamp, String sender){
+        String command = generateGetStockItemCommand(storeId, productId);
+        return new ServiceBusMessageCommand(correlationId, command, timestamp, sender );
+    }
+
+    private String generateGetStockItemCommand(Long storeId, Long productId){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("method", "getStockItemByStoreIdAndProductId");
+        jsonObject.addProperty("storeId", storeId );
+        jsonObject.addProperty("productId", productId);
+        return new Gson().toJson(jsonObject);
+    }
+
+    public ServiceBusMessageCommand generateUpdateStockItemCommandMessage(String correlationId, StockItem stockItem,
+                                                                       Timestamp timestamp, String sender){
+        String command = generateUpdateStockItemCommand(stockItem);
+        return new ServiceBusMessageCommand(correlationId, command, timestamp, sender );
+    }
+
+    private String generateUpdateStockItemCommand(StockItem stockItem){
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("method", "updateStockItem");
+        jsonObject.addProperty("stockItem", messageManipulation.convertStockItemToString(stockItem) );
+        return new Gson().toJson(jsonObject);
+    }
+
 }

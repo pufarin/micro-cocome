@@ -5,8 +5,8 @@ import java.sql.Date;
 public class ReceivedOrder {
 
     private Date deliveryDate;
-    private int storeId;
-    private int orderId;
+        private int storeId;
+        private int orderId;
 
     public ReceivedOrder() {
     }

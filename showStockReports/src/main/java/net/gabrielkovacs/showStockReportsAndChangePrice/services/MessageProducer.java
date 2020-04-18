@@ -11,12 +11,15 @@ public class MessageProducer {
     private JmsTemplate jmsTemplate;
     private ActiveMQQueue showStockReportsQueue;
     private ActiveMQQueue apiGatewayQueue;
+    private ActiveMQQueue serviceBusResponse;
 
     //@Autowired
-    public MessageProducer(JmsTemplate jmsTemplate, ActiveMQQueue showStockReportsQueue, ActiveMQQueue apiGatewayQueue){
+    public MessageProducer(JmsTemplate jmsTemplate, ActiveMQQueue showStockReportsQueue, ActiveMQQueue apiGatewayQueue,
+                           ActiveMQQueue serviceBusResponse){
         this.jmsTemplate = jmsTemplate;
         this.showStockReportsQueue = showStockReportsQueue;
         this.apiGatewayQueue = apiGatewayQueue;
+        this.serviceBusResponse = serviceBusResponse;
     }
 
     public void sendMessageToShowStockReports(String clientCallBack){
@@ -27,4 +30,5 @@ public class MessageProducer {
         jmsTemplate.convertAndSend(apiGatewayQueue, message);
     }
 
+    public void sendMessageToServiceBusResponse(String message) {jmsTemplate.convertAndSend(serviceBusResponse, message);}
 }

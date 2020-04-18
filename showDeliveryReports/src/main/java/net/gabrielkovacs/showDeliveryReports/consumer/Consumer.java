@@ -2,6 +2,7 @@ package net.gabrielkovacs.showDeliveryReports.consumer;
 
 
 import net.gabrielkovacs.showDeliveryReports.entities.ClientCallBack;
+import net.gabrielkovacs.showDeliveryReports.entities.ServiceBusMessageResponse;
 import net.gabrielkovacs.showDeliveryReports.services.MessageHandler;
 import net.gabrielkovacs.showDeliveryReports.services.MessageManipulation;
 import org.slf4j.Logger;
@@ -27,6 +28,13 @@ public class Consumer {
         log.info("Received Message in ShowStockReports: {}", message);
         ClientCallBack clientCallBack = messageManipulation.convertStringToJSONObject(message);
         messageHandler.cosumeMessage(clientCallBack);
+    }
+
+    @JmsListener(destination = "service_bus_response")
+    public void consumeServiceBusResponse(String message){
+        log.info("Received Message in orderProductsAnsReceiveOrder ServiceBusResponse : {}", message);
+        ServiceBusMessageResponse serviceBusMessageResponse = messageManipulation.getServiceBusMessageResponseFromJSON(message);
+        messageHandler.consumeServiceBusMessageResponse(serviceBusMessageResponse);
     }
 }
 

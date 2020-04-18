@@ -1,7 +1,10 @@
 package net.gabrielkovacs.showStockReportsAndChangePrice.entities;
 
+import lombok.ToString;
+
 import javax.persistence.*;
 
+@ToString
 @Entity
 @Table(name="stockitem")
 public
