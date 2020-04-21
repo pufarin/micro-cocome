@@ -32,6 +32,11 @@ public class ProductDeliveryDuration {
         this.nrDays = nrDays;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "ProductDeliveryDuration{" +
+                "productId=" + productId +
+                ", nrDays=" + nrDays +
+                '}';
+    }
 }

@@ -55,4 +55,12 @@ public class MessageManipulation {
         Type listType = new TypeToken<ArrayList<ProductDeliveryDuration>>() {}.getType();
         return g.fromJson(document,listType );
     }
+
+    public String convertSupplyChainDataToString(ProductSupplierAndProducts theData){
+        return g.toJson(theData);
+    }
+
+    public ProductSupplierAndProducts jsonStringToProductSupplierAndProducts(String theData){
+        return  g.fromJson(theData, ProductSupplierAndProducts.class);
+    }
 }

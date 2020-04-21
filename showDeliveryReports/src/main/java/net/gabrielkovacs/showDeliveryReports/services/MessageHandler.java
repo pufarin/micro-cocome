@@ -29,17 +29,21 @@ public class MessageHandler {
         Date date= new Date();
         switch (eventName){
             case("returnDeliveryReports"):
+                Timestamp theTimeStamp = new Timestamp( date.getTime());
                 log.info("Already in the returnDeliveryReports {}", eventName);
 
                 Long enterpriseId = Long.parseLong(clientCallBack.getParameter());
-                List<DeliveryReport> deliveryReports = generateReportService.generateDeliveryReport(enterpriseId);
 
-                String responsePayload = messageManipulation.convertListOfDeliveryReportsToString(deliveryReports);
-                QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()));
-                log.info("This is the query response {} ", queryResponse.toString());
+                ProductSupplierAndProducts productSupplierAndProducts = generateReportService.generateProductSupplierAndProducts(enterpriseId);
 
-                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
-
+                if(productSupplierAndProducts.getSupplyChain().isEmpty()) {
+                    String responsePayload = String.format("The enterprise %d has no registered suppliers", enterpriseId);
+                    sendReplyToApiGateway(clientCallBack.getUuid(), date, responsePayload);
+                }else{
+                    ServiceBusMessageCommand getDeliveryTimePerProductIdCommand = generateReportService.generateGetDeliveryTimePerProductCommandMessage(
+                            clientCallBack.getUuid(),productSupplierAndProducts, theTimeStamp, "dr");
+                    messageProducer.getDeliveryTimePerProductId(getDeliveryTimePerProductIdCommand);
+                }
                 break;
             case("placeholder"):
                 log.info("Already in the placeholder {}", clientCallBack.toString());
@@ -48,15 +52,24 @@ public class MessageHandler {
         }
     }
 
+    private void sendReplyToApiGateway(String correlationId, Date date, String responsePayload) {
+
+        QueryResponse queryResponse = new QueryResponse(responsePayload, correlationId,new Timestamp( date.getTime()));
+        log.info("This is the query response {} ", queryResponse.toString());
+        messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
+    }
+
     public void consumeServiceBusMessageResponse(ServiceBusMessageResponse serviceBusMessageResponse){
         log.info("I am in the ServiceBusMessageResponse handler,  {}", serviceBusMessageResponse.toString());
         String eventName = serviceBusMessageResponse.getEventName();
         Date date= new Date();
         switch (eventName){
             case("getDeliveryDurationPerProduct"):
-                List<ProductDeliveryDuration> productDeliveryDurations = messageManipulation.convertJsonToProductDeliveryDurations(serviceBusMessageResponse.getDocument());
-                List<DeliveryReport> deliveryReports = productDeliveryDurations.stream().map()
+                ProductSupplierAndProducts productSupplierAndProducts = messageManipulation.jsonStringToProductSupplierAndProducts(serviceBusMessageResponse.getDocument());
+                List<DeliveryReport> response = generateReportService.generateDeliveryReport(productSupplierAndProducts);
+                String responsePayload = messageManipulation.convertListOfDeliveryReportsToString(response);
 
+                sendReplyToApiGateway(serviceBusMessageResponse.getCorrelationId(),date,responsePayload);
                 break;
         }
 

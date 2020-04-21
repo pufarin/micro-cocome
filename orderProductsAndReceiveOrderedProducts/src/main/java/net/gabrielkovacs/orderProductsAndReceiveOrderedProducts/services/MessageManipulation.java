@@ -57,4 +57,13 @@ public class MessageManipulation {
     public ReceivedOrder getReceivedOrderFromJson(String data){
         return g.fromJson(data, ReceivedOrder.class);
     }
+
+    public ProductSupplierAndProducts jsonStringToProductSupplierAndProducts(String theData){
+        return  g.fromJson(theData, ProductSupplierAndProducts.class);
+    }
+
+    public String convertSupplyChainDataToString(ProductSupplierAndProducts theData){
+        return g.toJson(theData);
+    }
+
 }

@@ -121,8 +121,18 @@ public class OrderProductService {
         return ResponseEntity.ok().body(queryResult);
     }
 */
+/*
     public List<ProductDeliveryDuration> getDeliveryDurationPerProduct(List<Long> productsId){
         List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
+        if(queryResult.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        return queryResult;
+    }
+*/
+    public List<Long> getDeliveryDurationPerProduct(List<Long> productsId){
+        List<Long> queryResult = productOrderRepository.getNrDays(productsId);
         if(queryResult.isEmpty()){
             return Collections.emptyList();
         }

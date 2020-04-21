@@ -2,11 +2,14 @@ package net.gabrielkovacs.showDeliveryReports.services;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.gabrielkovacs.showDeliveryReports.entities.ProductSupplierAndProducts;
 import net.gabrielkovacs.showDeliveryReports.entities.ServiceBusMessageCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
 
 import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
 import net.gabrielkovacs.showDeliveryReports.entities.ProductDeliveryDuration;
@@ -38,7 +40,7 @@ public class GenerateReportService {
         this.productSuplierRepository = productSuplierRepository;
         this.messageManipulation = messageManipulation;
     }
-
+/*
     public List<DeliveryReport> generateDeliveryReport(long enterpriseId){
         List<DeliveryReport> deliveryReport = new ArrayList<DeliveryReport>();
         List<Long> productSupplierIds = productSuplierRepository.getAllProductSupliersIdsPerEnterprise(enterpriseId);
@@ -66,7 +68,7 @@ public class GenerateReportService {
 
     }
     
-       
+   */
     
     private ResponseEntity<List<ProductDeliveryDuration>> getDeliveryTimePerProductId(List<Long> productId) {
 
@@ -82,10 +84,17 @@ public class GenerateReportService {
         return mean;
     }
 */
-    private double getMeanTime(List<ProductDeliveryDuration> productDeliveryDurations){
-        double mean = productDeliveryDurations.stream().map(pDD -> pDD.getNrDays()).mapToLong(Long::longValue).average().orElse(Double.NaN);;
-        
-        return mean;
+    public List<DeliveryReport>  generateDeliveryReport(ProductSupplierAndProducts productSupplierAndProducts){
+
+        HashMap<Long, List<Long>> supplyChain = productSupplierAndProducts.getSupplyChain();
+        List<DeliveryReport> toReturn = supplyChain.keySet().stream()
+                                                            .map(key-> new DeliveryReport(key,getMean(supplyChain.get(key))))
+                                                            .collect(Collectors.toList());
+        return toReturn;
+    }
+
+    private double getMean(List<Long> values){
+        return values.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
     }
 
     public String generateCorrelationId(){
@@ -93,18 +102,35 @@ public class GenerateReportService {
     }
 
     public ServiceBusMessageCommand generateGetDeliveryTimePerProductCommandMessage(String correlationId,
-                                                                                    List<Long> productId,
+                                                                                    ProductSupplierAndProducts productSupplierAndProducts,
                                                                                     Timestamp timestamp, String sender){
-        String command = generateGetDeliveryTimePerProductCommand(productId);
+        String command = generateGetDeliveryTimePerProductCommand(productSupplierAndProducts);
         return new ServiceBusMessageCommand(correlationId, command, timestamp, sender );
     }
 
-    private String generateGetDeliveryTimePerProductCommand(List<Long> productId){
-        String productIds = messageManipulation.convertListOfProductIdsToString(productId);
+    private String generateGetDeliveryTimePerProductCommand(ProductSupplierAndProducts productSupplierAndProducts){
+        String productIds = messageManipulation.convertSupplyChainDataToString(productSupplierAndProducts);
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("method", "getDeliveryDurationPerProduct");
-        jsonObject.addProperty("productId", productIds);
+        jsonObject.addProperty("supplyChain", productIds);
 
         return new Gson().toJson(jsonObject);
+    }
+
+    public ProductSupplierAndProducts generateProductSupplierAndProducts(long enterpriseId){
+        ProductSupplierAndProducts productSupplierAndProducts = new ProductSupplierAndProducts();
+
+        List<Long> productSupplierIds = productSuplierRepository.getAllProductSupliersIdsPerEnterprise(enterpriseId);
+        log.debug("Product Suppliers IDs: {} ", productSupplierIds);
+
+        if(!productSupplierIds.isEmpty()){
+            for( long suplierId: productSupplierIds ){
+                List<Long> productIds = productSuplierRepository.getAllProductIdsPerProductSuplier(suplierId);
+                log.debug("Product Ids: {}", productIds);
+                productSupplierAndProducts.addEntryToSupplyChain(suplierId, productIds);
+            }
+            return productSupplierAndProducts;
+        }
+        return new ProductSupplierAndProducts();
     }
 }

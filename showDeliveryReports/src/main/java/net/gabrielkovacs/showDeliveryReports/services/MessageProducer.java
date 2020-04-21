@@ -35,6 +35,6 @@ public class MessageProducer {
 
     public void getDeliveryTimePerProductId(ServiceBusMessageCommand serviceBusMessageCommand) {
         String message = messageManipulation.convertServiceBusMessageCommandToString(serviceBusMessageCommand);
-        jmsTemplate.convertAndSend(apiGatewayQueue, message);
+        jmsTemplate.convertAndSend(serviceBusCommand, message);
     }
 }

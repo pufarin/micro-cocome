@@ -21,7 +21,7 @@ class DeliveryReportController{
     public DeliveryReportController(GenerateReportService generateReportService){
         this.generateReportService = generateReportService;
     }
-
+/*
     @GetMapping(value="delivery-report/{enterpriseId}")
     public ResponseEntity<List<DeliveryReport>> generateDeliveryReportForEnterprise(@PathVariable long enterpriseId){
         List<DeliveryReport> queryResult = generateReportService.generateDeliveryReport(enterpriseId);
@@ -35,6 +35,6 @@ class DeliveryReportController{
 
     }
     
-    
+ */
 
 }

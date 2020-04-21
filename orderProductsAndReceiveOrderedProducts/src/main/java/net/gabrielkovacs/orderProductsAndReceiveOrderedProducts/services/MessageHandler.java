@@ -12,10 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.consumer.OrderState.*;
 
@@ -134,16 +132,30 @@ public class MessageHandler {
                 log.info("This is the getDeliveryDurationPerProduct CASE");
                 Timestamp theTimeStamp = new Timestamp( date.getTime());
 
-                // https://stackoverflow.com/questions/18544133/parsing-json-array-into-java-util-list-with-gson
-                JsonArray jsonArray = command.getAsJsonArray("productId");
-                List<Long> productId = new Gson().fromJson(jsonArray, ArrayList.class);
+                String requestParameters = command.get("supplyChain").getAsString();
+                ProductSupplierAndProducts productSupplierAndProducts = messageManipulation.jsonStringToProductSupplierAndProducts(requestParameters);
 
-                List<ProductDeliveryDuration> productDeliveryDurations = orderProductService.getDeliveryDurationPerProduct(productId);
-                String document = messageManipulation.convertProductDeliveryDurations(productDeliveryDurations);
+                HashMap <Long, List<Long>> supplyChain = productSupplierAndProducts.getSupplyChain();
+
+                ProductSupplierAndProducts productDeliveryDurations = new ProductSupplierAndProducts();
+
+                //supplyChain.keySet().stream().map(x->productDeliveryDurations.addEntryToSupplyChain(x,orderProductService.getDeliveryDurationPerProduct(supplyChain.get(x))));
+                List<Long> productSuppliers = supplyChain.keySet().stream().collect(Collectors.toList());
+
+                for(Long supplier: productSuppliers){
+                    List<Long> nrDays = orderProductService.getDeliveryDurationPerProduct(supplyChain.get(supplier));
+                    productDeliveryDurations.addEntryToSupplyChain(supplier, nrDays);
+                }
+
+                String document = messageManipulation.convertSupplyChainDataToString(productDeliveryDurations);
+
                 ServiceBusMessageResponse serviceBusMessageResponse = new ServiceBusMessageResponse(serviceBusMessageCommand.getCorrelationId(),
                         document,theTimeStamp,"oparop", "getDeliveryDurationPerProduct");
-
                 messageProducer.sendMessageToServiceBusResponse(messageManipulation.convertServiceBusMessageResponseToString(serviceBusMessageResponse));
+
+                // https://stackoverflow.com/questions/18544133/parsing-json-array-into-java-util-list-with-gson
+                // JsonArray jsonArray = command.getAsJsonArray("productId");
+                //List<Long> productId = new Gson().fromJson(jsonArray, ArrayList.class);
                 break;
         }
 
