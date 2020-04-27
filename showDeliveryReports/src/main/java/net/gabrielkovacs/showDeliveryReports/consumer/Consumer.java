@@ -23,14 +23,14 @@ public class Consumer {
 
     }
 
-    @JmsListener(destination = "show_delivery_reports")
+    @JmsListener(destination = "show_delivery_reports", containerFactory = "jmsListenerContainerFactoryQueue")
     public void cosume(String message){
         log.info("Received Message in ShowStockReports: {}", message);
         ClientCallBack clientCallBack = messageManipulation.convertStringToJSONObject(message);
         messageHandler.cosumeMessage(clientCallBack);
     }
 
-    @JmsListener(destination = "service_bus_response")
+    @JmsListener(destination = "service_bus_response", containerFactory = "jmsListenerContainerFactory")
     public void consumeServiceBusResponse(String message){
         log.info("Received Message in orderProductsAnsReceiveOrder ServiceBusResponse : {}", message);
         ServiceBusMessageResponse serviceBusMessageResponse = messageManipulation.getServiceBusMessageResponseFromJSON(message);

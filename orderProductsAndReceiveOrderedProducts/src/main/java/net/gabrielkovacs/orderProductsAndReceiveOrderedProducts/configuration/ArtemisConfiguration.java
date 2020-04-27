@@ -2,9 +2,11 @@ package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.configuration;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
+import org.apache.activemq.artemis.jms.client.ActiveMQTopic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 @Configuration
@@ -34,13 +36,13 @@ public class ArtemisConfiguration {
     }
 
     @Bean
-    public ActiveMQQueue serviceBusCommandQueue(){
-        return new ActiveMQQueue("service_bus_command");
+    public ActiveMQTopic serviceBusCommandTopic(){
+        return new ActiveMQTopic("service_bus_command");
     }
 
     @Bean
-    public ActiveMQQueue serviceBusResponseQueue(){
-        return new ActiveMQQueue("service_bus_response");
+    public ActiveMQTopic serviceBusResponseTopic(){
+        return new ActiveMQTopic("service_bus_response");
     }
 
     @Bean
@@ -50,8 +52,33 @@ public class ArtemisConfiguration {
     }
 
     @Bean
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        factory.setConnectionFactory(activeMQConnectionFactory());
+        factory.setPubSubDomain(true);
+        return factory;
+    }
+
+    @Bean
+    public DefaultJmsListenerContainerFactory jmsListenerContainerFactoryQueue() {
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        factory.setConnectionFactory(activeMQConnectionFactory());
+        factory.setPubSubDomain(false);
+        return factory;
+    }
+
+    @Bean
     public JmsTemplate jmsTemplate() {
-        return new JmsTemplate(activeMQConnectionFactory());
+        JmsTemplate jmsTemplate = new JmsTemplate(activeMQConnectionFactory());
+        jmsTemplate.setPubSubDomain(false);
+        return jmsTemplate;
+    }
+
+    @Bean
+    public JmsTemplate jmsTemplateTopic() {
+        JmsTemplate jmsTemplate = new JmsTemplate(activeMQConnectionFactory());
+        jmsTemplate.setPubSubDomain(true);
+        return jmsTemplate;
     }
 
 }

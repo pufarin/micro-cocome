@@ -24,7 +24,7 @@ public class Consumer {
 
     }
 
-    @JmsListener(destination = "order_receive_products")
+    @JmsListener(destination = "order_receive_products", containerFactory = "jmsListenerContainerFactoryQueue")
     public void consume(String message){
         log.info("Received Message in orderProductsAnsReceiveOrder: {}", message);
         ClientCallBack clientCallBack = messageManipulation.convertStringToJSONObject(message);
@@ -32,14 +32,14 @@ public class Consumer {
 
     }
 
-    @JmsListener(destination = "service_bus_command")
+    @JmsListener(destination = "service_bus_command", containerFactory = "jmsListenerContainerFactory")
     public void consumeServiceBusCommand(String message){
         log.info("Received Message in orderProductsAnsReceiveOrder ServiceBusCommand : {}", message);
         ServiceBusMessageCommand serviceBusMessageCommand = messageManipulation.getServiceBusMessageCommandFromJSON(message);
         messageHandler.consumeServiceBusMessageCommand(serviceBusMessageCommand);
     }
 
-    @JmsListener(destination = "service_bus_response")
+    @JmsListener(destination = "service_bus_response", containerFactory = "jmsListenerContainerFactory")
     public void consumeServiceBusResponse(String message){
         log.info("Received Message in orderProductsAnsReceiveOrder ServiceBusResponse : {}", message);
         ServiceBusMessageResponse serviceBusMessageResponse = messageManipulation.getServiceBusMessageResponseFromJSON(message);

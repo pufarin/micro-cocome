@@ -1,6 +1,7 @@
 package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
+import org.apache.activemq.artemis.jms.client.ActiveMQTopic;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +10,16 @@ public class MessageProducer {
 
     //@Autowired
     private JmsTemplate jmsTemplate;
+    private JmsTemplate jmsTemplateTopic;
     private ActiveMQQueue showStockReportsQueue;
     private ActiveMQQueue apiGatewayQueue;
-    private ActiveMQQueue serviceBusResponse;
+    private ActiveMQTopic serviceBusResponse;
 
     //@Autowired
-    public MessageProducer(JmsTemplate jmsTemplate, ActiveMQQueue showStockReportsQueue, ActiveMQQueue apiGatewayQueue,
-                           ActiveMQQueue serviceBusResponse){
+    public MessageProducer(JmsTemplate jmsTemplate, JmsTemplate jmsTemplateTopic, ActiveMQQueue showStockReportsQueue, ActiveMQQueue apiGatewayQueue,
+                           ActiveMQTopic serviceBusResponse){
         this.jmsTemplate = jmsTemplate;
+        this.jmsTemplateTopic = jmsTemplateTopic;
         this.showStockReportsQueue = showStockReportsQueue;
         this.apiGatewayQueue = apiGatewayQueue;
         this.serviceBusResponse = serviceBusResponse;
@@ -30,5 +33,5 @@ public class MessageProducer {
         jmsTemplate.convertAndSend(apiGatewayQueue, message);
     }
 
-    public void sendMessageToServiceBusResponse(String message) {jmsTemplate.convertAndSend(serviceBusResponse, message);}
+    public void sendMessageToServiceBusResponse(String message) {jmsTemplateTopic.convertAndSend(serviceBusResponse, message);}
 }
