@@ -193,6 +193,7 @@ public class MessageHandler {
                 }else{
                     log.info("The the order with the correlationId:{} could not be found", serviceBusMessageResponse.getCorrelationId());
                 }
+                break; // I need a break from debugging a missing break
             case("updated_stock"):
                 Timestamp theTimeStamp1 = new Timestamp( date.getTime());
                 StockItem stockItem1 = messageManipulation.convertStringToStockItem(serviceBusMessageResponse.getDocument());
@@ -207,6 +208,7 @@ public class MessageHandler {
 
                     if(newState.equals(finished_update.name())){
                         QueryResponse queryResponseReceivedOrder = new QueryResponse(serviceBusMessageResponse.getDocument(),orderProcessingState.getRequestUUID(), theTimeStamp1);
+                        log.info("finished_update State: {}", queryResponseReceivedOrder.toString());
                         messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
                     }
 
@@ -216,7 +218,7 @@ public class MessageHandler {
                     log.info("The the order with the correlationId:{} could not be found", serviceBusMessageResponse.getCorrelationId());
                 }
 
-
+                break;
 
 
 

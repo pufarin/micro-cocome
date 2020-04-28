@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
-public class ClientCallBack implements Serializable {
+public class ClientCallBack  {
     
     public ClientCallBack() {
     }
@@ -64,5 +64,16 @@ public class ClientCallBack implements Serializable {
 
     public void setCall_back(String call_back) {
         this.call_back = call_back;
+    }
+
+    @Override
+    public String toString() {
+        return "ClientCallBack{" +
+                "uuid='" + uuid + '\'' +
+                ", call_back='" + call_back + '\'' +
+                ", timeStamp=" + timeStamp +
+                ", eventName='" + eventName + '\'' +
+                ", parameter='" + parameter + '\'' +
+                '}';
     }
 }

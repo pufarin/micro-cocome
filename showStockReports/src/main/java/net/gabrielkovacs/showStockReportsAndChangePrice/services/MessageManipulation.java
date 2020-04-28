@@ -22,10 +22,6 @@ public class MessageManipulation {
         return g.fromJson(message, StockItem.class);
     }
 
-    public ServiceBusMessageCommand convertStringToServiceBusMessageCommand(String message){
-        return g.fromJson(message, ServiceBusMessageCommand.class);
-    }
-
     public ServiceBusMessageCommand getServiceBusMessageCommandFromJSON(String message){
         return  g.fromJson(message, ServiceBusMessageCommand.class);
     }

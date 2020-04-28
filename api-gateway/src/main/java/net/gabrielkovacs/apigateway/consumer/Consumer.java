@@ -25,7 +25,7 @@ public class Consumer {
         messageHandler.getClientCallbackById(incomingMessage.getUuid()).ifPresentOrElse(data -> {
             ClientCallBack clientCallBack = new ClientCallBack(data.getUuid(), data.getCall_back(),
                     data.getTimeStamp(), data.getEventName(), incomingMessage.getPayload());
-
+            log.info("Sending data to callback address: {}", clientCallBack.toString());
             messageHandler.sendDataToCallback(data.getCall_back(), clientCallBack);
         }, () -> log.info("The desired UUID has not been found in the DB"));
 
