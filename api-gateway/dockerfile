@@ -1,0 +1,5 @@
+FROM adoptopenjdk:11-jre-hotspot
+VOLUME /tmp
+EXPOSE 8082
+COPY target/*.jar apiGate.jar
+ENTRYPOINT ["java","-jar","/apiGate.jar"]
