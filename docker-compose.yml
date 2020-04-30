@@ -9,6 +9,8 @@ services:
             dockerfile: Dockerfile
         ports:
             - "8083:8083"
+        extra_hosts:
+          - "theDB:172.17.0.1"
     
     show_delivery_reports:
         build:
@@ -16,6 +18,8 @@ services:
             dockerfile: Dockerfile
         ports: 
             - "8086:8086"
+        extra_hosts:
+            - "theDB:172.17.0.1"
 
     show_stock_reports:
         build:
@@ -23,6 +27,8 @@ services:
             dockerfile: Dockerfile
         ports:
             - "8085:8085"
+        extra_hosts:
+            - "theDB:172.17.0.1"
 
     api_gateway:
         build:
@@ -30,3 +36,5 @@ services:
             dockerfile: Dockerfile
         ports:
             - "8082:8082"
+        extra_hosts:
+            - "theDB:172.17.0.1"
