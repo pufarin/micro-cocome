@@ -1,4 +1,3 @@
-/*
 insert into productorder (id, delivery_date, ordering_date, store_id) values (5, '2019-10-06' ,'2019-10-04' , 200);
 insert into productorder (id, delivery_date, ordering_date, store_id) values (6, '2019-10-07', '2019-10-04', 200);
 insert into productorder (id, delivery_date, ordering_date, store_id) values (7, '2019-10-08', '2019-10-04', 200);
@@ -14,4 +13,3 @@ insert into orderentry (id, amount, product_id, product_order_id) values (109, 9
 insert into orderentry (id, amount, product_id, product_order_id) values (110, 98, 101, 9);
 insert into orderentry (id, amount, product_id, product_order_id) values (111, 97, 102, 10);
 insert into orderentry (id, amount, product_id, product_order_id) values (112, 100, 103, 11);
-*/
