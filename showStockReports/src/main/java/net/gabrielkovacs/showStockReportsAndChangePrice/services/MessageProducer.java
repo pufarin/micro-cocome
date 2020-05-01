@@ -19,10 +19,6 @@ public class MessageProducer {
         this.apiGatewayQueue = apiGatewayQueue;
     }
 
-    public void sendMessageToShowStockReports(String clientCallBack){
-        jmsTemplate.convertAndSend(showStockReportsQueue,clientCallBack);
-    }
-
     public void sendMessageToApiGateway(String message){
         jmsTemplate.convertAndSend(apiGatewayQueue, message);
     }
