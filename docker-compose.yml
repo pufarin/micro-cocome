@@ -1,3 +1,4 @@
+
 version: '3.7'
 
 
@@ -9,13 +10,15 @@ services:
             dockerfile: Dockerfile
         ports:
             - "8083:8083"
-    
+        network_mode: "host"
+
     show_delivery_reports:
         build:
             context: ./showDeliveryReports
             dockerfile: Dockerfile
-        ports: 
+        ports:
             - "8086:8086"
+        network_mode: "host"
 
     show_stock_reports:
         build:
@@ -23,3 +26,12 @@ services:
             dockerfile: Dockerfile
         ports:
             - "8085:8085"
+        network_mode: "host"
+
+    api_gateway:
+        build:
+            context: ./api-gateway
+            dockerfile: Dockerfile
+        ports:
+            - "8082:8082"
+        network_mode: "host"
