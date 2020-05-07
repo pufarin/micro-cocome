@@ -25,7 +25,7 @@ public class ApiGatewayServices {
     private final String getStockItemReports = "stockitemreport/{storeId}";
     private final String changePrice = "stockitem/store/{storeId}/{stockItemId}";
 
-    private final String deliveryReports = "http://localhost:8086";
+    private final String deliveryReports = "http://172.17.0.1:8086";
     private final String getDeliveryReports = "/delivery-report/{enterpriseId}";
 
     private WebClient webClient;
