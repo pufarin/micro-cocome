@@ -29,9 +29,11 @@ pipeline {
                 echo 'Stop the existing application'
                 sh "docker-compose -f /var/lib/jenkins/workspace/api_gateway_1_to_1_db/docker-compose.yml down"
 
-                echo 'Start the application'
+                echo 'Build the images'
+                sh "docker-compose build --no-cache -f /var/lib/jenkins/workspace/api_gateway_1_to_1_db/docker-compose.yml build --no-cache"
 
-                sh "docker-compose -f /var/lib/jenkins/workspace/api_gateway_1_to_1_db/docker-compose.yml up -d"
+                echo 'Start the application'
+                sh "docker-compose build --no-cache -f /var/lib/jenkins/workspace/api_gateway_1_to_1_db/docker-compose.yml up -d"
             }
         }
 
