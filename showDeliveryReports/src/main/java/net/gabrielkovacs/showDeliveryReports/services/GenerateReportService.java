@@ -20,7 +20,7 @@ public class GenerateReportService {
 
     Logger log = LoggerFactory.getLogger(GenerateReportService.class);
 
-    private final String baseUri = "http://localhost:8083";
+    private final String baseUri = "http://172.17.0.1:8083";
     private final String getDeliveryTimePerProductId = "product-order/delivery-time";
 
     private WebClient webClient = WebClient.create(baseUri);

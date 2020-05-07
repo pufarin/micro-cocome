@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 public class CreateAndReceiveOrderController {
 
     private OrderProductService orderProductService;
-    private final String baseUri = "http://localhost:8085";
+    private final String baseUri = "http://172.17.0.1:8085";
 
     public CreateAndReceiveOrderController(OrderProductService orderProductService){
         this.orderProductService = orderProductService;

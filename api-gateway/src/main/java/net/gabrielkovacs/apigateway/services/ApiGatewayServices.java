@@ -17,11 +17,11 @@ import net.gabrielkovacs.apigateway.models.StockItemReport;
 @Service
 public class ApiGatewayServices {
 
-    private final String productManagementBaseUrl = "http://localhost:8083";
+    private final String productManagementBaseUrl = "http://172.17.0.1:8083";
     private final String createOrderPath = "/store/{id}/order";
     private final String receivedOrderPath = "/product-order/{orderEntryId}";   
 
-    private final String stockReports = "http://localhost:8085";
+    private final String stockReports = "http://172.17.0.1:8085";
     private final String getStockItemReports = "stockitemreport/{storeId}";
     private final String changePrice = "stockitem/store/{storeId}/{stockItemId}";
 
