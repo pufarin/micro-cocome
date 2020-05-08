@@ -11,7 +11,7 @@ public class ProductOrder{
 
     @Id
     @Column(name="id")
-    @SequenceGenerator(name = "mySeqGen", sequenceName = "mySeq", initialValue = 5, allocationSize = 100)
+    @SequenceGenerator(name = "mySeqGen", sequenceName = "mySeq1", initialValue = 12, allocationSize = 100)
     @GeneratedValue(generator = "mySeqGen")
     private long id;
     
