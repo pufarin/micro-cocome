@@ -1,5 +1,5 @@
 FROM adoptopenjdk:11-jre-hotspot
 VOLUME /tmp
 EXPOSE 8083
-COPY target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY target/*.jar opRop.jar
+ENTRYPOINT ["java","-jar","/opRop.jar"]
