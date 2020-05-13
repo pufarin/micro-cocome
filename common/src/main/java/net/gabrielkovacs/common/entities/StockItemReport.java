@@ -1,4 +1,4 @@
-package net.gabrielkovacs.showStockReportsAndChangePrice.entities;
+package net.gabrielkovacs.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
