@@ -1,19 +1,19 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductDeliveryDuration;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductOrder;
+import net.gabrielkovacs.common.entities.OrderEntry;
+import net.gabrielkovacs.common.entities.ProductOrder;
+import net.gabrielkovacs.common.models.ProductDeliveryDuration;
+import net.gabrielkovacs.common.repository.OrderEntryRepository;
+import net.gabrielkovacs.common.repository.ProductOrderRepository;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.StockItem;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.OrderEntryRepository;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.ProductOrderRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

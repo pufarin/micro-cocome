@@ -1,4 +1,4 @@
-package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities;
+package net.gabrielkovacs.common.models;
 
 public interface ProductDeliveryDuration {
 

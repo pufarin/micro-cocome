@@ -1,7 +1,7 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.controller;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductDeliveryDuration;
+import net.gabrielkovacs.common.entities.OrderEntry;
+import net.gabrielkovacs.common.models.ProductDeliveryDuration;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.StockItem;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services.OrderProductService;

@@ -1,14 +1,13 @@
-package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository;
+package net.gabrielkovacs.common.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.gabrielkovacs.common.entities.ProductOrder;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductDeliveryDuration;
+import net.gabrielkovacs.common.models.ProductDeliveryDuration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
