@@ -1,4 +1,4 @@
-package net.gabrielkovacs.showDeliveryReports.entities;
+package net.gabrielkovacs.showDeliveryReports.models;
 
 public class ProductDeliveryDuration {
 
@@ -31,7 +31,5 @@ public class ProductDeliveryDuration {
     public void setNrDays(long nrDays) {
         this.nrDays = nrDays;
     }
-
-
 
 }

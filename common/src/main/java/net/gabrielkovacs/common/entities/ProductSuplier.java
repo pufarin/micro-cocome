@@ -1,11 +1,8 @@
-package net.gabrielkovacs.showDeliveryReports.entities;
+package net.gabrielkovacs.common.entities;
 
 import java.util.Collection;
 
 import javax.persistence.*;
-
-import net.gabrielkovacs.showDeliveryReports.entities.Product;
-import net.gabrielkovacs.showDeliveryReports.entities.TradingEnterprise;
 
 
 @Entity

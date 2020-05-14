@@ -11,8 +11,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name="stockitem")
-public
-class StockItem {
+public class StockItem {
 
     @Id
     @Column(name="id")

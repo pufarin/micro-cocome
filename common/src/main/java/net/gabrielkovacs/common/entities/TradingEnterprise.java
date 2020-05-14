@@ -1,7 +1,5 @@
-package net.gabrielkovacs.showDeliveryReports.entities;
+package net.gabrielkovacs.common.entities;
 
-
-import net.gabrielkovacs.showDeliveryReports.entities.ProductSuplier;
 
 import javax.persistence.*;
 import java.util.Collection;

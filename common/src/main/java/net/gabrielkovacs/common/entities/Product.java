@@ -1,4 +1,4 @@
-package net.gabrielkovacs.showDeliveryReports.entities;
+package net.gabrielkovacs.common.entities;
 
 
 
@@ -8,8 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import net.gabrielkovacs.showDeliveryReports.entities.ProductSuplier;
 
 @Entity
 @Table(name="product")

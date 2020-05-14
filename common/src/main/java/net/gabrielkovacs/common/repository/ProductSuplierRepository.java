@@ -1,12 +1,13 @@
-package net.gabrielkovacs.showDeliveryReports.repository;
+package net.gabrielkovacs.common.repository;
 
 import java.util.List;
 
+import net.gabrielkovacs.common.entities.ProductSuplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import net.gabrielkovacs.showDeliveryReports.entities.ProductSuplier;
+
 
 @Repository
 public interface ProductSuplierRepository extends JpaRepository<ProductSuplier, Long>{

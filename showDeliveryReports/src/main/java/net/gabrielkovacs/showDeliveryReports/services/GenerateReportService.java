@@ -9,11 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
 
-import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
-import net.gabrielkovacs.showDeliveryReports.entities.ProductDeliveryDuration;
-import net.gabrielkovacs.showDeliveryReports.repository.ProductSuplierRepository;
+
+import net.gabrielkovacs.common.models.DeliveryReport;
+import net.gabrielkovacs.showDeliveryReports.models.ProductDeliveryDuration;
+import net.gabrielkovacs.common.repository.ProductSuplierRepository;
 
 @Service
 public class GenerateReportService {

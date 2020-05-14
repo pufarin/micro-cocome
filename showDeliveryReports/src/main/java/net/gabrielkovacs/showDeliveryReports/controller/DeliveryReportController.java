@@ -1,12 +1,9 @@
 package net.gabrielkovacs.showDeliveryReports.controller;
 
+import net.gabrielkovacs.common.models.DeliveryReport;
 import org.springframework.web.bind.annotation.RestController;
-
-import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
 import net.gabrielkovacs.showDeliveryReports.services.GenerateReportService;
-
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

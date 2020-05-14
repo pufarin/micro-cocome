@@ -1,4 +1,4 @@
-package net.gabrielkovacs.showDeliveryReports.entities;
+package net.gabrielkovacs.common.models;
 
 public class DeliveryReport {
 
