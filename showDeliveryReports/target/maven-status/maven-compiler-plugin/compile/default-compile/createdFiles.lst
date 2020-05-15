@@ -1,4 +1,3 @@
 net\gabrielkovacs\showDeliveryReports\controller\DeliveryReportController.class
 net\gabrielkovacs\showDeliveryReports\services\GenerateReportService.class
 net\gabrielkovacs\showDeliveryReports\ShowDeliveryReportsApplication.class
-net\gabrielkovacs\showDeliveryReports\models\ProductDeliveryDuration.class
