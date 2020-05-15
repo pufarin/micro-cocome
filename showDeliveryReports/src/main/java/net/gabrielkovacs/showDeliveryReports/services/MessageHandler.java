@@ -1,7 +1,7 @@
 package net.gabrielkovacs.showDeliveryReports.services;
 
+import net.gabrielkovacs.common.models.DeliveryReport;
 import net.gabrielkovacs.showDeliveryReports.entities.ClientCallBack;
-import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
 import net.gabrielkovacs.showDeliveryReports.entities.QueryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,6 +2,7 @@ package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
 
 import com.google.gson.Gson;
+import net.gabrielkovacs.common.entities.StockItem;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

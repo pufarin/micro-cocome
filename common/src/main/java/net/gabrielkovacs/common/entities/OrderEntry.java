@@ -24,6 +24,13 @@ public class OrderEntry{
     // @JoinColumn(name = "productorderid")
     private ProductOrder productOrder;
 
+    public OrderEntry(){}
+
+    public OrderEntry(int amount, long productId) {
+        this.amount = amount;
+        this.productId = productId;
+    }
+
     public long getId() {
         return id;
     }

@@ -1,9 +1,9 @@
 package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
+import net.gabrielkovacs.common.entities.StockItem;
+import net.gabrielkovacs.common.entities.StockItemReport;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.ReportEntry;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItem;
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.StockItemReport;
-import net.gabrielkovacs.showStockReportsAndChangePrice.repository.StockItemRepository;
+import net.gabrielkovacs.common.repository.StockItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -33,16 +33,7 @@ public class ShowStockReportsService {
         return new ReportEntry(stockItemReport.getID(),stockItemReport.getAmount(), stockItemReport.getMinStock(),
                 stockItemReport.getMaxStock());
     }
-/*
-    // Should PUT return something?
-    public void changeStockItemPrice(Long stockItemId, Double newSalesPrice){
-        Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
-        queryResult.ifPresent(stockItem ->{stockItem.setSalePrice(newSalesPrice);
-            stockItemRepository.save(stockItem);
-        });
 
-    }
-*/
     public ResponseEntity<StockItem> changeStockItemPrice(Long stockItemId, Double newSalesPrice){
         Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
 

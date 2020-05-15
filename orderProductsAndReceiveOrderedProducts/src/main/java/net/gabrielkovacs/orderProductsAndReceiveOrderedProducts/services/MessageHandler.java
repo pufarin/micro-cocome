@@ -1,5 +1,6 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
+import net.gabrielkovacs.common.entities.OrderEntry;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

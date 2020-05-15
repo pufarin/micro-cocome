@@ -1,5 +1,6 @@
 package net.gabrielkovacs.showStockReportsAndChangePrice.services;
 
+import net.gabrielkovacs.common.entities.StockItem;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

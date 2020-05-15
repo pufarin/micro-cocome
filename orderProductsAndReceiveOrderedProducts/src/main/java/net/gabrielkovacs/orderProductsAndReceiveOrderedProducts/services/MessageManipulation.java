@@ -2,6 +2,7 @@ package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
 
 import com.google.gson.Gson;
+import net.gabrielkovacs.common.entities.OrderEntry;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

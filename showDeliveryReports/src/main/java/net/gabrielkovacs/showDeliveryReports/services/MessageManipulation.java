@@ -2,8 +2,8 @@ package net.gabrielkovacs.showDeliveryReports.services;
 
 
 import com.google.gson.Gson;
+import net.gabrielkovacs.common.models.DeliveryReport;
 import net.gabrielkovacs.showDeliveryReports.entities.ClientCallBack;
-import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
 import net.gabrielkovacs.showDeliveryReports.entities.QueryResponse;
 import org.springframework.stereotype.Service;
 

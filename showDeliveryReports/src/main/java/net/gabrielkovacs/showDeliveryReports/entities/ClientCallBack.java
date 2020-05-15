@@ -1,11 +1,10 @@
 package net.gabrielkovacs.showDeliveryReports.entities;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-@Entity
+
 public class ClientCallBack implements Serializable {
     
     public ClientCallBack() {
