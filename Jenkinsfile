@@ -12,6 +12,7 @@ pipeline {
             agent {docker 'adoptopenjdk/maven-openjdk11' }
             steps {
                 echo 'Building..'
+                sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db/common/pom.xml clean install'
                 sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
                 sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db/showDeliveryReports/pom.xml clean package'
                 sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db/showStockReports/pom.xml clean package'
