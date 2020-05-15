@@ -1,34 +1,26 @@
 package net.gabrielkovacs.showDeliveryReports.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.gabrielkovacs.common.models.DeliveryReport;
+import net.gabrielkovacs.common.models.ProductDeliveryDuration;
+import net.gabrielkovacs.common.repository.ProductOrderRepository;
+import net.gabrielkovacs.common.repository.ProductSuplierRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
 
-import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
-import net.gabrielkovacs.showDeliveryReports.entities.ProductDeliveryDuration;
-import net.gabrielkovacs.showDeliveryReports.repository.ProductSuplierRepository;
-
+import java.util.ArrayList;
+import java.util.List;
 @Service
 public class GenerateReportService {
 
     Logger log = LoggerFactory.getLogger(GenerateReportService.class);
 
-    private final String baseUri = "http://172.17.0.1:8083";
-    private final String getDeliveryTimePerProductId = "product-order/delivery-time";
-
-    private WebClient webClient = WebClient.create(baseUri);
-
     private ProductSuplierRepository productSuplierRepository;
+    private ProductOrderRepository productOrderRepository;
 
-    public GenerateReportService(ProductSuplierRepository productSuplierRepository){
+    public GenerateReportService(ProductSuplierRepository productSuplierRepository, ProductOrderRepository productOrderRepository){
         this.productSuplierRepository = productSuplierRepository;
+        this.productOrderRepository = productOrderRepository;
     }
 
     public List<DeliveryReport> generateDeliveryReport(long enterpriseId){
@@ -40,10 +32,10 @@ public class GenerateReportService {
                 List<Long> productIds = productSuplierRepository.getAllProductIdsPerProductSuplier(suplierId);
                 log.debug("Product Ids: {}", productIds);
                 if(!productIds.isEmpty()){
-                    ResponseEntity<List<ProductDeliveryDuration>> productDeliveryDuration = getDeliveryTimePerProductId(productIds);
+                    List<ProductDeliveryDuration> productDeliveryDuration = getDeliveryTimePerProductId(productIds);
                     log.debug("Product Delivery Duration: {}", productDeliveryDuration);
-                    if(productDeliveryDuration.getStatusCode().equals(HttpStatus.OK)){
-                        deliveryReport.add(new DeliveryReport(suplierId, getMeanTime(productDeliveryDuration.getBody())));
+                    if(!productDeliveryDuration.isEmpty()){
+                        deliveryReport.add(new DeliveryReport(suplierId, getMeanTime(productDeliveryDuration)));
                     }
 
                 }
@@ -57,23 +49,11 @@ public class GenerateReportService {
 
 
     }
-    
-       
-    
-    private ResponseEntity<List<ProductDeliveryDuration>> getDeliveryTimePerProductId(List<Long> productId) {
 
-        return webClient.get()
-                        .uri(uriBuilder -> uriBuilder.path(getDeliveryTimePerProductId).queryParam("productsId", productId).build())
-                        .exchange()
-                        .flatMap(response -> response.toEntityList(ProductDeliveryDuration.class))
-                        .block();
+    private List<ProductDeliveryDuration> getDeliveryTimePerProductId(List<Long> productId) {
+        return productOrderRepository.getNrDaysPerProductDelivery(productId);
     }
-/*
-    private double getMeanTime(List<Long> nrDays){
-        double mean = nrDays.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
-        return mean;
-    }
-*/
+
     private double getMeanTime(List<ProductDeliveryDuration> productDeliveryDurations){
         double mean = productDeliveryDurations.stream().map(pDD -> pDD.getNrDays()).mapToLong(Long::longValue).average().orElse(Double.NaN);;
         

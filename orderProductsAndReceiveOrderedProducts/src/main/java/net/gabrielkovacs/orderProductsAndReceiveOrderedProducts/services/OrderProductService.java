@@ -1,20 +1,17 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductDeliveryDuration;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductOrder;
+import net.gabrielkovacs.common.entities.OrderEntry;
+import net.gabrielkovacs.common.entities.ProductOrder;
+import net.gabrielkovacs.common.entities.StockItem;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.StockItem;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.OrderEntryRepository;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.ProductOrderRepository;
+import net.gabrielkovacs.common.repository.OrderEntryRepository;
+import net.gabrielkovacs.common.repository.ProductOrderRepository;
+import net.gabrielkovacs.common.repository.StockItemRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,20 +20,12 @@ public class OrderProductService {
     // use 2 facades for entities and repository?
     private ProductOrderRepository productOrderRepository;
     private OrderEntryRepository orderEntryRepository;
-    
-    private final String baseUri = "http://172.17.0.1:8085";
-    private final String getStockItemByStoreIdAnsProductId = "/stockitem?storeId={storeId}&productId={productId}";
-    private final String updateStockItemAmount = "/stockitem/{stockItemId}";
+    private StockItemRepository stockItemRepository;
 
-    private WebClient webClient = WebClient.create(baseUri);
-
-    public OrderProductService(ProductOrderRepository productOrderRepository, OrderEntryRepository orderEntryRepository){
+    public OrderProductService(ProductOrderRepository productOrderRepository, OrderEntryRepository orderEntryRepository, StockItemRepository stockItemRepository){
         this.productOrderRepository = productOrderRepository;
         this.orderEntryRepository = orderEntryRepository;
-    }
-
-    public void setWebClientBaseUri(String baseUri){
-        this.webClient = WebClient.create(baseUri);
+        this.stockItemRepository = stockItemRepository;
     }
 
     public OrderEntry orderProduct(OrderEntry orderEntry, long storeId){
@@ -69,13 +58,13 @@ public class OrderProductService {
             long productId = orderEntry.get().getProductId();
             int orderedAmount = orderEntry.get().getAmount();
 
-            ResponseEntity<StockItem> stockItemQueryResult =  getStockItem(queryResult.get().getStoreId(), productId);
-            if(stockItemQueryResult.getStatusCode().equals(HttpStatus.OK)){
-                StockItem stockItem = stockItemQueryResult.getBody();
+            Optional<StockItem> stockItemQueryResult =  getStockItem(queryResult.get().getStoreId(), productId);
+            if(stockItemQueryResult.isPresent()){
+                StockItem stockItem = stockItemQueryResult.get();
                 int existingAmount = stockItem.getAmount();
                 stockItem.setAmount(existingAmount+orderedAmount);
-                ResponseEntity<?> updateStockItemAmountRequest = updateStockItemAmount(stockItem,stockItem.getId());
-                if(updateStockItemAmountRequest.getStatusCode().equals(HttpStatus.OK)){
+                StockItem updateStockItem = stockItemRepository.save(stockItem);
+                if(updateStockItem != null){
                     return new ResponseEntity<>(HttpStatus.OK);
                 }else{
                     return new ResponseEntity<>("Product amount could not be updated",HttpStatus.INTERNAL_SERVER_ERROR);
@@ -89,32 +78,8 @@ public class OrderProductService {
         }
     }
 
-
-    public ResponseEntity<StockItem> getStockItem(long storeId, long productId){
-        return webClient.get()
-                        .uri(getStockItemByStoreIdAnsProductId, storeId,productId)
-                        .exchange()
-                        .flatMap(response -> response.toEntity(StockItem.class))
-                        .block();
+    private Optional<StockItem> getStockItem(long storeId, long productId){
+        return stockItemRepository.findAllByStoreIdAndProductId(storeId,productId);
     }
 
-
-    public ResponseEntity<?> updateStockItemAmount(StockItem stockItem, long stockItemId ){
-        return webClient.put().uri(updateStockItemAmount, stockItemId)
-                        .syncBody(stockItem)
-                        .exchange()
-                        .flatMap(response -> response.toEntity(StockItem.class))
-                       // .retrieve()
-                       // .bodyToMono(ResponseEntity.class)
-                        .block();
-    }
-
-    public ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(List<Long> productsId){
-        List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
-        if(queryResult.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok().body(queryResult);
-    }
 }

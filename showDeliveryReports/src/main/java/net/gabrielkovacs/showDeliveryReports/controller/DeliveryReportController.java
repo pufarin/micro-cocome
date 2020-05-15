@@ -2,7 +2,7 @@ package net.gabrielkovacs.showDeliveryReports.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
+import net.gabrielkovacs.common.models.DeliveryReport;
 import net.gabrielkovacs.showDeliveryReports.services.GenerateReportService;
 
 import java.util.List;
