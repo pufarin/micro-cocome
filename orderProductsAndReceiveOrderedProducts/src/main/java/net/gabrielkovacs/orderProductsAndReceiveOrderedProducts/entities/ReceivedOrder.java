@@ -5,13 +5,13 @@ import java.sql.Date;
 public class ReceivedOrder {
 
     private Date deliveryDate;
-        private int storeId;
-        private int orderId;
+        private Long storeId;
+        private Long orderId;
 
     public ReceivedOrder() {
     }
 
-    public ReceivedOrder(Date deliveryDate, int storeId, int orderId) {
+    public ReceivedOrder(Date deliveryDate, Long storeId, Long orderId) {
         this.deliveryDate = deliveryDate;
         this.storeId = storeId;
         this.orderId = orderId;
@@ -25,19 +25,19 @@ public class ReceivedOrder {
         this.deliveryDate = deliveryDate;
     }
 
-    public int getStoreId() {
+    public Long getStoreId() {
         return storeId;
     }
 
-    public void setStoreId(int storeId) {
+    public void setStoreId(Long storeId) {
         this.storeId = storeId;
     }
 
-    public int getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 }

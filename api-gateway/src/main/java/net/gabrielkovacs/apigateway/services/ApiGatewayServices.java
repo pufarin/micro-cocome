@@ -1,19 +1,25 @@
 package net.gabrielkovacs.apigateway.services;
 
-import com.google.gson.Gson;
-import net.gabrielkovacs.apigateway.entities.ClientCallBack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.gabrielkovacs.apigateway.models.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.UUID;
+import java.util.List;
 
 @Service
 public class ApiGatewayServices {
 
-    Logger log = LoggerFactory.getLogger(ApiGatewayServices.class);
+    private final String productManagementBaseUrl = "http://localhost:8083";
+    private final String createOrderPath = "/store/{id}/order";
+    private final String receivedOrderPath = "/product-order/{storeId}/{orderEntryId}";
+
+    private final String stockReports = "http://localhost:8085";
+    private final String getStockItemReports = "stockitemreport/{storeId}";
+    private final String changePrice = "stockitem/store/{storeId}/{stockItemId}";
+
+    private final String deliveryReports = "http://localhost:8086";
+    private final String getDeliveryReports = "/delivery-report/{enterpriseId}";
 
     private WebClient webClient;
 
@@ -21,19 +27,50 @@ public class ApiGatewayServices {
         this.webClient = WebClient.create(baseUri);
     }
 
-    public String generateCorrelationId(){
-        return UUID.randomUUID().toString();
+    public ResponseEntity<ProductOrder> submitProductOrder(SubmitedOrder submitedOrder, Long storeId) {
+        setWebClientBaseUri(productManagementBaseUrl);
+        return webClient.post().uri(createOrderPath, storeId).bodyValue(submitedOrder).exchange()
+                .flatMap(response -> response.toEntity(ProductOrder.class)).block();
+
     }
 
-    public String generateJSONStringFromClass(ClientCallBack clientCallBack){
-        Gson gson = new Gson();
-        return  gson.toJson(clientCallBack);
+    public ResponseEntity<List<StockItemReport>> getStockItemReports(Long storeId) {
+        setWebClientBaseUri(stockReports);
+        return webClient.get().uri(getStockItemReports, storeId).exchange()
+                .flatMap(response -> response.toEntityList(StockItemReport.class)).block();
+
     }
 
-    public ResponseEntity<ClientCallBack> sendDataToCallbackAddress(String callBackURL, ClientCallBack clientCallBack){
-        setWebClientBaseUri(callBackURL);
-        log.info("LAST HOP: Sending data to callback address: {}", clientCallBack.toString());
-        return webClient.post().bodyValue(clientCallBack).exchange()
-                .flatMap(response -> response.toEntity(ClientCallBack.class)).block();
+    public ResponseEntity<StockItem> changeProductPrice(Long storeId, Long stockItemId, StockItem stockItem) {
+        setWebClientBaseUri(stockReports);
+        return webClient.put()
+                .uri(changePrice, storeId, stockItemId)
+                .bodyValue(stockItem)
+                .exchange()
+                .flatMap(response -> response.toEntity(StockItem.class))
+                .block();
+
+
     }
+
+    public ResponseEntity<OrderDeliveryDate> receiveOrder(OrderDeliveryDate orderDeliveryDate, Long storeId, Long orderEntryId){
+        setWebClientBaseUri(productManagementBaseUrl);
+        return webClient.put()
+                .uri(receivedOrderPath, storeId, orderEntryId )
+                .bodyValue(orderDeliveryDate)
+                .exchange()
+                .flatMap(response -> response.toEntity(OrderDeliveryDate.class))
+                .block();
+
+    }
+
+    public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(Long enterpriseId){
+        setWebClientBaseUri(deliveryReports);
+        return webClient.get()
+                .uri(getDeliveryReports,enterpriseId)
+                .exchange()
+                .flatMap(response -> response.toEntityList(SupplierPerformance.class))
+                .block();
+    }
+
 }

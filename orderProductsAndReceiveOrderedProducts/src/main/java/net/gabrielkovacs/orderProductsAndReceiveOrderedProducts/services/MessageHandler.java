@@ -66,7 +66,7 @@ public class MessageHandler {
                 orderProcessingStateRepository.save(orderProcessingState);
                 break;
             case("receiveOrder"):
-                log.info("Already in the receive order {}", clientCallBack.toString());
+/*                log.info("Already in the receive order {}", clientCallBack.toString());
                 Timestamp theTimeStamp = new Timestamp( date.getTime());
 
                 // The incoming data
@@ -93,30 +93,8 @@ public class MessageHandler {
                     orderProcessingStateRepository.save(orderProcessingState1);
 
                     messageProducer.sendRequestStockItem(serviceBusMessageCommand);
-                }
-                // Get the product Id so that the command message can be created
+                }*/
 
-
-                /*
-                ServiceBusMessageCommand serviceBusMessageCommand = orderProductService.generateCommandMessage(
-                        clientCallBack.getUuid(), (long) receivedOrder.getStoreId(), productId, theTimeStamp,"oparop" );
-
-                // Save the state of the order
-                OrderProcessingState orderProcessingState1 = new OrderProcessingState(clientCallBack.getUuid(),initiated.name(),
-                        eventName,orderedAmount,productId,(long) receivedOrder.getStoreId());
-                orderProcessingStateRepository.save(orderProcessingState1);
-
-                messageProducer.sendRequestStockItem(serviceBusMessageCommand);
-
-                log.info("This is the message command {}", serviceBusMessageCommand);
-
-
-                ResponseEntity<?> responseEntity = orderProductService.updateProductOrderDeliveryDate(receivedOrder,receivedOrder.getOrderId());
-
-               String responsePayloadReceivedOrder = messageManipulation.convertResponseToString(responseEntity);
-                QueryResponse queryResponseReceivedOrder = new QueryResponse(responsePayloadReceivedOrder,clientCallBack.getUuid(),new Timestamp( date.getTime()));
-                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
-              */
                 break;
         }
     }
