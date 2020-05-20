@@ -96,7 +96,7 @@ public class OrderProductService {
         return UUID.randomUUID().toString();
     }
 
-    public void receiveOrder(Long orderId, Long storeId ,String correlationId){
+    public void receiveOrder(Long orderId, String correlationId, ReceivedOrder receivedOrder){
         java.util.Date date= new java.util.Date();
         Timestamp theTimeStamp = new Timestamp( date.getTime());
 
@@ -107,16 +107,23 @@ public class OrderProductService {
             messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
 
         } else {
+            ProductOrder productOrder = queryResult.get();
+            Long storeId = productOrder.getStoreId();
+
+            //Save delivery date
+            productOrder.setDeliveryDate(receivedOrder.getDeliveryDate());
+            productOrderRepository.save(productOrder);
+
             log.info("Everything is OK");
             Optional<OrderEntry> orderEntry1 = orderEntryRepository.findById(orderId);
             long productId = orderEntry1.get().getProductId();
             int orderedAmount = orderEntry1.get().getAmount();
 
             ServiceBusMessageCommand serviceBusMessageCommand = this.generateGetStockItemCommandMessage(
-                    correlationId, storeId, productId, theTimeStamp,"oparop" );
+                    correlationId, storeId , productId, theTimeStamp,"oparop" );
 
             OrderProcessingState orderProcessingState1 = new OrderProcessingState(correlationId,initiated.name(),
-                    "receiveOrder",orderedAmount,productId,(long) storeId);
+                    "receiveOrder",orderedAmount,productId, storeId);
             orderProcessingStateRepository.save(orderProcessingState1);
 
             messageProducer.sendRequestStockItem(serviceBusMessageCommand);

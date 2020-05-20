@@ -34,10 +34,11 @@ public class CreateAndReceiveOrderController {
     }
 
     @Operation(summary = "UC4 receive ordered products", description = "Adds the delivery date into the ProductOrder table as well as updates the stock (needs showStockReports) ")
-    @PutMapping("product-order/{storeId}/{orderId}")
-    ResponseEntity<?> receivedOrder(@RequestBody ReceivedOrder receivedOrder, @PathVariable Long storeId, @PathVariable Long orderId){
+    @PutMapping("product-order/{orderId}")
+    ResponseEntity<?> receivedOrder(@RequestBody ReceivedOrder receivedOrder,  @PathVariable Long orderId){
         String correlationId = orderProductService.generateCorrelationId();
-        orderProductService.receiveOrder(orderId, storeId, correlationId);
+        orderProductService.receiveOrder(orderId, correlationId, receivedOrder);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

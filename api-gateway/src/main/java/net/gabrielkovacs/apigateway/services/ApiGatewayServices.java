@@ -12,7 +12,7 @@ public class ApiGatewayServices {
 
     private final String productManagementBaseUrl = "http://localhost:8083";
     private final String createOrderPath = "/store/{id}/order";
-    private final String receivedOrderPath = "/product-order/{storeId}/{orderEntryId}";
+    private final String receivedOrderPath = "/product-order/{orderEntryId}";
 
     private final String stockReports = "http://localhost:8085";
     private final String getStockItemReports = "stockitemreport/{storeId}";
@@ -53,10 +53,10 @@ public class ApiGatewayServices {
 
     }
 
-    public ResponseEntity<OrderDeliveryDate> receiveOrder(OrderDeliveryDate orderDeliveryDate, Long storeId, Long orderEntryId){
+    public ResponseEntity<OrderDeliveryDate> receiveOrder(OrderDeliveryDate orderDeliveryDate, Long orderEntryId){
         setWebClientBaseUri(productManagementBaseUrl);
         return webClient.put()
-                .uri(receivedOrderPath, storeId, orderEntryId )
+                .uri(receivedOrderPath, orderEntryId )
                 .bodyValue(orderDeliveryDate)
                 .exchange()
                 .flatMap(response -> response.toEntity(OrderDeliveryDate.class))

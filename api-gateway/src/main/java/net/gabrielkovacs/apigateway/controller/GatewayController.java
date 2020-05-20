@@ -51,7 +51,7 @@ public class GatewayController {
     }
     @PutMapping("stores/{storeId}/orders/{orderId}")
     public ResponseEntity<OrderDeliveryDate> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
-        return apiGatewayServices.receiveOrder(orderDeliveryDate, storeId ,orderId);
+        return apiGatewayServices.receiveOrder(orderDeliveryDate,orderId);
 
     }
 
