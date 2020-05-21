@@ -16,16 +16,13 @@ public class MessageManipulation {
     Gson g = new Gson();
 
 
-    public ClientCallBack convertStringToJSONObject(String message){
-        return g.fromJson(message, ClientCallBack.class);
-    }
-
     public String convertListOfDeliveryReportsToString(List<DeliveryReport> deliveryReports){
         return g.toJson(deliveryReports);
     }
 
-    public String convertQueryResponseToString(QueryResponse queryResponse){
-        return g.toJson(queryResponse);
+    public List<DeliveryReport> convertJsonToDeliveryReport(String document){
+        Type listType = new TypeToken<ArrayList<DeliveryReport>>() {}.getType();
+        return g.fromJson(document,listType );
     }
 
     public String convertServiceBusMessageCommandToString(ServiceBusMessageCommand serviceBusMessageCommand){
@@ -35,11 +32,6 @@ public class MessageManipulation {
 
     public ServiceBusMessageResponse getServiceBusMessageResponseFromJSON(String message){
         return  g.fromJson(message, ServiceBusMessageResponse.class);
-    }
-
-    public List<ProductDeliveryDuration> convertJsonToProductDeliveryDurations(String document){
-        Type listType = new TypeToken<ArrayList<ProductDeliveryDuration>>() {}.getType();
-        return g.fromJson(document,listType );
     }
 
     public String convertSupplyChainDataToString(ProductSupplierAndProducts theData){

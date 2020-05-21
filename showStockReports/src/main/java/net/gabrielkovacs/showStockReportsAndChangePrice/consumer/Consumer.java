@@ -1,6 +1,5 @@
 package net.gabrielkovacs.showStockReportsAndChangePrice.consumer;
 
-import net.gabrielkovacs.showStockReportsAndChangePrice.entities.ClientCallBack;
 import net.gabrielkovacs.showStockReportsAndChangePrice.entities.ServiceBusMessageCommand;
 import net.gabrielkovacs.showStockReportsAndChangePrice.services.MessageHandler;
 import net.gabrielkovacs.showStockReportsAndChangePrice.services.MessageManipulation;
@@ -20,13 +19,6 @@ public class Consumer {
         this.messageManipulation = messageManipulation;
         this.messageHandler = messageHandler;
 
-    }
-
-    @JmsListener(destination = "show_stock_reports", containerFactory = "jmsListenerContainerFactoryQueue")
-    public void cosume(String message){
-        log.info("Received Message in ShowStockReports: {}", message);
-        ClientCallBack clientCallBack = messageManipulation.convertStringToJSONObject(message);
-        messageHandler.cosumeMessage(clientCallBack);
     }
 
     @JmsListener(destination = "service_bus_command", containerFactory = "jmsListenerContainerFactory")

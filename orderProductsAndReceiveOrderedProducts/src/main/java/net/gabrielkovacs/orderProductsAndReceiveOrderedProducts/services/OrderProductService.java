@@ -3,6 +3,7 @@ package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.flow.OrderProcessingSubscriber;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.OrderEntryRepository;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.OrderProcessingStateRepository;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.ProductOrderRepository;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.SubmissionPublisher;
 
 
 import static net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.consumer.OrderState.initiated;
@@ -24,6 +26,10 @@ import static net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.consumer.
 public class OrderProductService {
 
     Logger log = LoggerFactory.getLogger(OrderProductService.class);
+
+    private SubmissionPublisher<QueryResponse> publisher = new SubmissionPublisher<>();
+    private OrderProcessingSubscriber orderProcessingSubscriber;
+
     // use 2 facades for entities and repository?
     private ProductOrderRepository productOrderRepository;
     private OrderEntryRepository orderEntryRepository;
@@ -31,13 +37,15 @@ public class OrderProductService {
     private MessageProducer messageProducer;
     private OrderProcessingStateRepository orderProcessingStateRepository;
 
-    public OrderProductService(ProductOrderRepository productOrderRepository, OrderEntryRepository orderEntryRepository,
+    public OrderProductService(OrderProcessingSubscriber orderProcessingSubscriber, ProductOrderRepository productOrderRepository, OrderEntryRepository orderEntryRepository,
                                MessageManipulation messageManipulation, MessageProducer messageProducer, OrderProcessingStateRepository orderProcessingStateRepository){
+        this.orderProcessingSubscriber = orderProcessingSubscriber;
         this.productOrderRepository = productOrderRepository;
         this.orderEntryRepository = orderEntryRepository;
         this.messageManipulation = messageManipulation;
         this.messageProducer = messageProducer;
         this.orderProcessingStateRepository = orderProcessingStateRepository;
+        publisher.subscribe(orderProcessingSubscriber);
     }
 
 
@@ -103,8 +111,9 @@ public class OrderProductService {
         Optional<ProductOrder> queryResult = productOrderRepository.getProductOrderByOrderEntryId(orderId);
         if (!queryResult.isPresent()) {
             String responsePayloadReceivedOrder = String.format("The order with the id: %d has not been found", orderId);
-            QueryResponse queryResponseReceivedOrder = new QueryResponse(responsePayloadReceivedOrder,correlationId,new Timestamp( date.getTime()));
-            messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
+            QueryResponse queryResponseReceivedOrder = new QueryResponse("NOT FOUND",correlationId,new Timestamp( date.getTime()));
+            //messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
+            publisher.submit(queryResponseReceivedOrder);
 
         } else {
             ProductOrder productOrder = queryResult.get();

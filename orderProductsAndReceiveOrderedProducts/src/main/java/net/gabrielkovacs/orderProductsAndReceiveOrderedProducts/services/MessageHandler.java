@@ -1,9 +1,9 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.flow.OrderProcessingSubscriber;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.OrderEntryRepository;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.OrderProcessingStateRepository;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.ProductOrderRepository;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.SubmissionPublisher;
 import java.util.stream.Collectors;
 
 import static net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.consumer.OrderState.*;
@@ -20,6 +21,9 @@ import static net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.consumer.
 @Service
 public class MessageHandler {
     Logger log = LoggerFactory.getLogger(MessageHandler.class);
+
+    private SubmissionPublisher<QueryResponse> publisher = new SubmissionPublisher<>();
+    private OrderProcessingSubscriber orderProcessingSubscriber;
 
     private MessageManipulation messageManipulation;
     private MessageProducer messageProducer;
@@ -30,12 +34,13 @@ public class MessageHandler {
     private OrderProcessingStateService orderProcessingStateService;
 
 
-    public MessageHandler(MessageManipulation messageManipulation,
+    public MessageHandler(OrderProcessingSubscriber orderProcessingSubscriber, MessageManipulation messageManipulation,
                           MessageProducer messageProducer, OrderProductService orderProductService,
                           OrderProcessingStateRepository orderProcessingStateRepository,
                           OrderEntryRepository orderEntryRepository,
                           ProductOrderRepository productOrderRepository,
                           OrderProcessingStateService orderProcessingStateService) {
+        this.orderProcessingSubscriber = orderProcessingSubscriber;
         this.messageManipulation = messageManipulation;
         this.messageProducer = messageProducer;
         this.orderProductService = orderProductService;
@@ -43,6 +48,7 @@ public class MessageHandler {
         this.orderEntryRepository = orderEntryRepository;
         this.productOrderRepository = productOrderRepository;
         this.orderProcessingStateService = orderProcessingStateService;
+        publisher.subscribe(orderProcessingSubscriber);
     }
 
     public void cosumeMessage(ClientCallBack clientCallBack){
@@ -173,6 +179,7 @@ public class MessageHandler {
                 }
                 break; // I need a break from debugging a missing break
             case("updated_stock"):
+                log.info("I am in UPDATE STOCK CASE");
                 Timestamp theTimeStamp1 = new Timestamp( date.getTime());
                 StockItem stockItem1 = messageManipulation.convertStringToStockItem(serviceBusMessageResponse.getDocument());
                 Optional<OrderProcessingState> orderProcessingStateQuery1 = orderProcessingStateRepository.findById(serviceBusMessageResponse.getCorrelationId());
@@ -184,10 +191,12 @@ public class MessageHandler {
                     orderProcessingState.setOrderState(newState);
                     orderProcessingStateRepository.save(orderProcessingState);
 
+
                     if(newState.equals(finished_update.name())){
                         QueryResponse queryResponseReceivedOrder = new QueryResponse(serviceBusMessageResponse.getDocument(),orderProcessingState.getRequestUUID(), theTimeStamp1);
                         log.info("finished_update State: {}", queryResponseReceivedOrder.toString());
-                        messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
+                        publisher.submit(queryResponseReceivedOrder);
+                       // messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
                     }
 
 

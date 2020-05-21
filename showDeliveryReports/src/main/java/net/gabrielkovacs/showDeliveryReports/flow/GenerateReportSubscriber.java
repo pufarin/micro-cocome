@@ -1,6 +1,6 @@
-package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.flow;
+package net.gabrielkovacs.showDeliveryReports.flow;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.QueryResponse;
+import net.gabrielkovacs.showDeliveryReports.entities.QueryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.Flow;
 
 @Component
-public class OrderProcessingSubscriber implements Flow.Subscriber<QueryResponse> {
+public class GenerateReportSubscriber implements Flow.Subscriber<QueryResponse> {
 
-    Logger log = LoggerFactory.getLogger(OrderProcessingSubscriber.class);
+    Logger log = LoggerFactory.getLogger(GenerateReportSubscriber.class);
     private Flow.Subscription subscription;
 
     static QueryResponse response = new QueryResponse("placeholder", "1", null);;
@@ -20,7 +20,7 @@ public class OrderProcessingSubscriber implements Flow.Subscriber<QueryResponse>
     }
 
     public static void setResponse(QueryResponse response) {
-        OrderProcessingSubscriber.response = response;
+        GenerateReportSubscriber.response = response;
     }
 
     public void onSubscribe(Flow.Subscription subscription) {
