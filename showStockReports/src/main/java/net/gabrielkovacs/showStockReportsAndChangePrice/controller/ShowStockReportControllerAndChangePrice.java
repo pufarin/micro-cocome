@@ -3,6 +3,8 @@ package net.gabrielkovacs.showStockReportsAndChangePrice.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +21,8 @@ import net.gabrielkovacs.showStockReportsAndChangePrice.repository.StockItemRepo
 
 @RestController
 class ShowStockReportControllerAndChangePrice {
-    
+
+    Logger log = LoggerFactory.getLogger(ShowStockReportControllerAndChangePrice.class);
     private StockItemRepository stockItemRepository;
 
     
@@ -67,7 +70,7 @@ class ShowStockReportControllerAndChangePrice {
     @Operation(summary = "Used for UC4 receive ordered products", description = "Updates the amount of a stockItem by the amount ordered ")
     @PutMapping("stockitem/{stockItemId}")
     public ResponseEntity<?> updateStockItem(@RequestBody StockItem stockItem, @PathVariable Long stockItemId){
-
+        log.info("This is the incoming StockItem: {} ", stockItem);
         Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
 
         if(queryResult.isPresent() && stockItem.getId() == stockItemId){
@@ -83,14 +86,6 @@ class ShowStockReportControllerAndChangePrice {
 
     @Operation(summary = "UC7 Change Stock Item Price ", description = "Updates the price of a stockItem based on the provided data")
     @PutMapping("stockitem/store/{storeId}/{stockItemId}")
-    /*
-    void updatePrice(@RequestBody StockItem newStockItem, @PathVariable Long storeId, @PathVariable Long stockItemId){
-        Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
-        queryResult.ifPresent(stockItem ->{stockItem.setSalePrice(newStockItem.getSalePrice());
-            stockItemRepository.save(stockItem);
-        });
-    }
-    */
     public ResponseEntity<?> updatePrice(@RequestBody StockItem newStockItem, @PathVariable Long storeId, @PathVariable Long stockItemId){
         Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
         queryResult.ifPresent(stockItem ->{stockItem.setSalePrice(newStockItem.getSalePrice());

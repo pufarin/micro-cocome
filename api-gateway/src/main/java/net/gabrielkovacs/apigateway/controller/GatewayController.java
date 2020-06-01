@@ -1,14 +1,11 @@
 package net.gabrielkovacs.apigateway.controller;
 
+import net.gabrielkovacs.apigateway.models.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.ClientResponse;
 
-import net.gabrielkovacs.apigateway.models.OrderDeliveryDate;
-import net.gabrielkovacs.apigateway.models.ProductOrder;
-import net.gabrielkovacs.apigateway.models.StockItem;
-import net.gabrielkovacs.apigateway.models.StockItemReport;
-import net.gabrielkovacs.apigateway.models.SubmitedOrder;
-import net.gabrielkovacs.apigateway.models.SupplierPerformance;
 import net.gabrielkovacs.apigateway.services.ApiGatewayServices;
 
 import java.util.List;
@@ -25,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 public class GatewayController {
 
+    Logger log = LoggerFactory.getLogger(GatewayController.class);
     private ApiGatewayServices apiGatewayServices;
 
     public GatewayController (ApiGatewayServices apiGatewayServices){
@@ -49,10 +47,19 @@ public class GatewayController {
         return apiGatewayServices.changeProductPrice(storeId, stockItemId, stockItem);
 
     }    
-    @PutMapping("stores/{storeId}/orders/{orderId}")
+/*    @PutMapping("stores/{storeId}/orders/{orderId}")
     public ResponseEntity<OrderDeliveryDate> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
         return apiGatewayServices.receiveOrder(orderDeliveryDate, orderId);
         
+    }*/
+
+    @PutMapping("stores/{storeId}/orders/{orderId}")
+    public ResponseEntity<?> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
+
+        OrderDetails orderDetails = apiGatewayServices.receiveOrder(orderDeliveryDate, orderId).getBody();
+        log.info("The OrderDetails: {}", orderDetails);
+
+        return  apiGatewayServices.getAndUpdateStockItem(orderDetails);
     }
         
     @GetMapping("enterprises/{enterpriseId}/delivery-reports")

@@ -29,4 +29,5 @@ class StockItem {
     private long  storeId;
 
 
+
 }
