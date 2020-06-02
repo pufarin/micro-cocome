@@ -23,25 +23,10 @@ public class GenerateReportService {
 
     Logger log = LoggerFactory.getLogger(GenerateReportService.class);
 
-    private final String baseUri = "http://localhost:8083";
-    private final String getDeliveryTimePerProductId = "product-order/delivery-time";
-
-    private WebClient webClient = WebClient.create(baseUri);
-
     private ProductSuplierRepository productSuplierRepository;
 
     public GenerateReportService(ProductSuplierRepository productSuplierRepository){
         this.productSuplierRepository = productSuplierRepository;
-    }
-
-    
-    private ResponseEntity<List<ProductDeliveryDuration>> getDeliveryTimePerProductId(List<Long> productId) {
-
-        return webClient.get()
-                        .uri(uriBuilder -> uriBuilder.path(getDeliveryTimePerProductId).queryParam("productsId", productId).build())
-                        .exchange()
-                        .flatMap(response -> response.toEntityList(ProductDeliveryDuration.class))
-                        .block();
     }
 
     public List<DeliveryReport>  generateDeliveryReport(ProductSupplierAndProducts productSupplierAndProducts){

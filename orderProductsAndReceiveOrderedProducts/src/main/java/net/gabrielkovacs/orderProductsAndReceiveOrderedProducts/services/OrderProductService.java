@@ -18,19 +18,13 @@ public class OrderProductService {
     // use 2 facades for entities and repository?
     private ProductOrderRepository productOrderRepository;
     private OrderEntryRepository orderEntryRepository;
-    
-    private final String baseUri = "http://localhost:8085";
 
-    private WebClient webClient = WebClient.create(baseUri);
 
     public OrderProductService(ProductOrderRepository productOrderRepository, OrderEntryRepository orderEntryRepository){
         this.productOrderRepository = productOrderRepository;
         this.orderEntryRepository = orderEntryRepository;
     }
 
-    public void setWebClientBaseUri(String baseUri){
-        this.webClient = WebClient.create(baseUri);
-    }
 
     public OrderEntry orderProduct(OrderEntry orderEntry, long storeId){
 
@@ -63,17 +57,6 @@ public class OrderProductService {
 
             }
     }
-
-/*
-    public ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(List<Long> productsId){
-        List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
-        if(queryResult.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok().body(queryResult);
-    }
-*/
 
     public ResponseEntity<ProductSupplierAndProducts> getDeliveryDuration(ProductSupplierAndProducts productSupplierAndProducts){
         HashMap<Long, List<Long>> supplyChain = productSupplierAndProducts.getSupplyChain();

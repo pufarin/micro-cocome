@@ -116,15 +116,6 @@ public class ApiGatewayServices {
 
     }
 
-    public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(Long enterpriseId){
-        setWebClientBaseUri(deliveryReports);
-        return webClient.get()
-                        .uri(getDeliveryReports,enterpriseId)
-                        .exchange()
-                        .flatMap(response -> response.toEntityList(SupplierPerformance.class))
-                        .block();
-    }
-
     public ResponseEntity<ProductSupplierAndProducts> getProductSupplierAndProducts (Long enterpriseId){
         setWebClientBaseUri(deliveryReports);
         return webClient.get()
