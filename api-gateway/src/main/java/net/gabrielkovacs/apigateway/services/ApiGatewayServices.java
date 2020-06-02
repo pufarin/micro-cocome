@@ -2,31 +2,34 @@ package net.gabrielkovacs.apigateway.services;
 
 import java.util.List;
 
+import net.gabrielkovacs.apigateway.models.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import net.gabrielkovacs.apigateway.models.OrderDeliveryDate;
-import net.gabrielkovacs.apigateway.models.ProductOrder;
-import net.gabrielkovacs.apigateway.models.StockItem;
-import net.gabrielkovacs.apigateway.models.SubmitedOrder;
-import net.gabrielkovacs.apigateway.models.SupplierPerformance;
-import net.gabrielkovacs.apigateway.models.StockItemReport;
-
 @Service
 public class ApiGatewayServices {
 
-    private final String productManagementBaseUrl = "http://172.17.0.1:8083";
-    private final String createOrderPath = "/store/{id}/order";
-    private final String receivedOrderPath = "/product-order/{orderEntryId}";   
+    Logger log = LoggerFactory.getLogger(ApiGatewayServices.class);
 
-    private final String stockReports = "http://172.17.0.1:8085";
+    private final String productManagementBaseUrl = "http://localhost:8083";
+    private final String createOrderPath = "/store/{id}/order";
+    private final String receivedOrderPath = "/product-order/{orderEntryId}";
+    private final String deliveryTime = "product-order/delivery-time";
+
+    private final String stockReports = "http://localhost:8085";
     private final String getStockItemReports = "stockitemreport/{storeId}";
     private final String changePrice = "stockitem/store/{storeId}/{stockItemId}";
+    private final String getStockItemByStoreIdAnsProductId = "/stockitem?storeId={storeId}&productId={productId}";
+    private final String updateStockItemAmount = "/stockitem/{stockItemId}";
 
-    private final String deliveryReports = "http://172.17.0.1:8086";
-    private final String getDeliveryReports = "/delivery-report/{enterpriseId}";
+    private final String deliveryReports = "http://localhost:8086";
+    private final String getDeliveryReports = "/delivery-report/generation";
+    private final String getSupplierAndProducts = "/delivery-report/supplier-and-products/{enterpriseId}";
 
     private WebClient webClient;
 
@@ -60,24 +63,80 @@ public class ApiGatewayServices {
 
     }
 
-    public ResponseEntity<OrderDeliveryDate> receiveOrder(OrderDeliveryDate orderDeliveryDate, Long orderEntryId){
+    public ResponseEntity<OrderDetails> receiveOrder(OrderDeliveryDate orderDeliveryDate, Long orderEntryId){
         setWebClientBaseUri(productManagementBaseUrl);
         return webClient.put()
-                        .uri(receivedOrderPath, orderEntryId )
-                        .bodyValue(orderDeliveryDate)
-                        .exchange()
-                        .flatMap(response -> response.toEntity(OrderDeliveryDate.class))
-                        .block();
+                .uri(receivedOrderPath, orderEntryId )
+                .bodyValue(orderDeliveryDate)
+                .exchange()
+                .flatMap(response -> response.toEntity(OrderDetails.class))
+                .block();
 
     }
 
-    public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(Long enterpriseId){
+    public ResponseEntity<ProductSupplierAndProducts> getProductSupplierAndProducts (Long enterpriseId){
         setWebClientBaseUri(deliveryReports);
         return webClient.get()
-                        .uri(getDeliveryReports,enterpriseId)
-                        .exchange()
-                        .flatMap(response -> response.toEntityList(SupplierPerformance.class))
-                        .block();
+                .uri(getSupplierAndProducts,enterpriseId)
+                .exchange()
+                .flatMap(response -> response.toEntity(ProductSupplierAndProducts.class))
+                .block();
+
+    }
+
+    public ResponseEntity<ProductSupplierAndProducts> getDeliveryTime(ProductSupplierAndProducts productSupplierAndProducts) {
+        setWebClientBaseUri(productManagementBaseUrl);
+        return webClient.post().uri(deliveryTime).bodyValue(productSupplierAndProducts).exchange()
+                .flatMap(response -> response.toEntity(ProductSupplierAndProducts.class)).block();
+
+    }
+
+    public ResponseEntity<List<SupplierPerformance>> generateDeliveryReport(ProductSupplierAndProducts deliveryTime) {
+        setWebClientBaseUri(deliveryReports);
+        return webClient.post().uri(getDeliveryReports).bodyValue(deliveryTime).exchange()
+                .flatMap(response -> response.toEntityList(SupplierPerformance.class)).block();
+
+    }
+
+    public ResponseEntity<StockItem> getStockItem(long storeId, long productId){
+        setWebClientBaseUri(stockReports);
+        return webClient.get()
+                .uri(getStockItemByStoreIdAnsProductId, storeId,productId)
+                .exchange()
+                .flatMap(response -> response.toEntity(StockItem.class))
+                .block();
+    }
+
+    public ResponseEntity<?> updateStockItemAmount(StockItem stockItem, long stockItemId ){
+        setWebClientBaseUri(stockReports);
+        return webClient.put().uri(updateStockItemAmount, stockItemId)
+                .syncBody(stockItem)
+                .exchange()
+                .flatMap(response -> response.toEntity(StockItem.class))
+                // .retrieve()
+                // .bodyToMono(ResponseEntity.class)
+                .block();
+    }
+
+    public ResponseEntity<?> getAndUpdateStockItem(OrderDetails orderDetails){
+        ResponseEntity<StockItem> stockItemQueryResult =  getStockItem(orderDetails.getStoreId(), orderDetails.getProductId());
+        if(stockItemQueryResult.getStatusCode().equals(HttpStatus.OK)){
+            StockItem stockItem = stockItemQueryResult.getBody();
+            long existingAmount = stockItem.getAmount();
+            stockItem.setAmount(existingAmount + orderDetails.getAmount());
+            log.info("The Updated StockItem: {}", stockItem);
+            ResponseEntity<?> updateStockItemAmountRequest = updateStockItemAmount(stockItem,stockItem.getId());
+
+            if(updateStockItemAmountRequest.getStatusCode().equals(HttpStatus.OK)){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>("Product amount could not be updated",HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+
+        }else{
+            return new ResponseEntity<>("Could not retrieve product to be updated",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

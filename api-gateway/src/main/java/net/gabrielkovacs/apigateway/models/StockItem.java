@@ -8,19 +8,19 @@ public class StockItem{
     private Long maxStock;
     private Long minStock;
     private Double salePrice;
-    private Long product;
-    private Long store;
+    private Long productId;
+    private Long storeId;
     
     public StockItem(){}
 
-    public StockItem(Long id, Long amount, Long maxStock, Long minStock, Double salePrice, Long product, Long store) {
+    public StockItem(Long id, Long amount, Long maxStock, Long minStock, Double salePrice, Long productId, Long storeId) {
         this.id = id;
         this.amount = amount;
         this.maxStock = maxStock;
         this.minStock = minStock;
         this.salePrice = salePrice;
-        this.product = product;
-        this.store = store;
+        this.productId = productId;
+        this.storeId = storeId;
     }
     
 
@@ -64,20 +64,20 @@ public class StockItem{
         this.salePrice = salePrice;
     }
 
-    public Long getProduct() {
-        return this.product;
+    public Long getProductId() {
+        return this.productId;
     }
 
-    public void setProduct(Long product) {
-        this.product = product;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    public Long getStore() {
-        return this.store;
+    public Long getStoreId() {
+        return this.storeId;
     }
 
-    public void setStore(Long store) {
-        this.store = store;
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
 }

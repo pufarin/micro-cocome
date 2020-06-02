@@ -3,6 +3,8 @@ package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 import net.gabrielkovacs.common.entities.OrderEntry;
 import net.gabrielkovacs.common.entities.ProductOrder;
 import net.gabrielkovacs.common.entities.StockItem;
+import net.gabrielkovacs.common.models.ProductSupplierAndProducts;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderDetails;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
 import net.gabrielkovacs.common.repository.OrderEntryRepository;
 import net.gabrielkovacs.common.repository.ProductOrderRepository;
@@ -12,7 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderProductService {
@@ -42,44 +48,46 @@ public class OrderProductService {
         return productOrder;
     }
 
-    public ResponseEntity<?> updateProductOrderDeliveryDate(ReceivedOrder receivedOrder, long orderId) {
+    public ResponseEntity<OrderDetails> updateProductOrderDeliveryDate(ReceivedOrder receivedOrder, long orderId) {
         Optional<ProductOrder> queryResult = productOrderRepository.getProductOrderByOrderEntryId(orderId);
         if (!queryResult.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            queryResult.ifPresent(productOrder -> {
-                productOrder.setDeliveryDate(receivedOrder.getDeliveryDate());
-                productOrderRepository.save(productOrder);
-            });
-
-        
+            ProductOrder productOrder = queryResult.get();
+            productOrder.setDeliveryDate(receivedOrder.getDeliveryDate());
+            productOrderRepository.save(productOrder);
 
             Optional<OrderEntry> orderEntry = orderEntryRepository.findById(orderId);
             long productId = orderEntry.get().getProductId();
             int orderedAmount = orderEntry.get().getAmount();
 
-            Optional<StockItem> stockItemQueryResult =  getStockItem(queryResult.get().getStoreId(), productId);
-            if(stockItemQueryResult.isPresent()){
-                StockItem stockItem = stockItemQueryResult.get();
-                int existingAmount = stockItem.getAmount();
-                stockItem.setAmount(existingAmount+orderedAmount);
-                StockItem updateStockItem = stockItemRepository.save(stockItem);
-                if(updateStockItem != null){
-                    return new ResponseEntity<>(HttpStatus.OK);
-                }else{
-                    return new ResponseEntity<>("Product amount could not be updated",HttpStatus.INTERNAL_SERVER_ERROR);
-                }
+            return ResponseEntity.ok().body(new OrderDetails(productOrder.getStoreId(),productId, orderedAmount));
 
-
-            }else{
-                return new ResponseEntity<>("Could not retrieve product to be updated",HttpStatus.INTERNAL_SERVER_ERROR);
-            }    
-                       
         }
     }
 
-    private Optional<StockItem> getStockItem(long storeId, long productId){
-        return stockItemRepository.findAllByStoreIdAndProductId(storeId,productId);
+    public ResponseEntity<ProductSupplierAndProducts> getDeliveryDuration(ProductSupplierAndProducts productSupplierAndProducts){
+        HashMap<Long, List<Long>> supplyChain = productSupplierAndProducts.getSupplyChain();
+
+        ProductSupplierAndProducts productDeliveryDurations = new ProductSupplierAndProducts();
+
+        List<Long> productSuppliers = supplyChain.keySet().stream().collect(Collectors.toList());
+
+        for(Long supplier: productSuppliers){
+            List<Long> nrDays = getDeliveryDurationPerProduct(supplyChain.get(supplier));
+            productDeliveryDurations.addEntryToSupplyChain(supplier, nrDays);
+        }
+
+        return ResponseEntity.ok().body(productDeliveryDurations);
     }
+
+    private List<Long> getDeliveryDurationPerProduct(List<Long> productsId){
+        List<Long> queryResult = productOrderRepository.getNrDays(productsId);
+        if(queryResult.isEmpty()){
+            return Collections.emptyList();
+        }
+        return queryResult;
+    }
+
 
 }
