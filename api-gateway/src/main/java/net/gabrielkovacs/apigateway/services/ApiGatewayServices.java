@@ -19,7 +19,8 @@ public class ApiGatewayServices {
 
     private final String productManagementBaseUrl = "http://localhost:8083";
     private final String createOrderPath = "/store/{id}/order";
-    private final String receivedOrderPath = "/product-order/{orderEntryId}";   
+    private final String receivedOrderPath = "/product-order/{orderEntryId}";
+    private final String deliveryTime = "product-order/delivery-time";
 
     private final String stockReports = "http://localhost:8085";
     private final String getStockItemReports = "stockitemreport/{storeId}";
@@ -28,7 +29,8 @@ public class ApiGatewayServices {
     private final String updateStockItemAmount = "/stockitem/{stockItemId}";
 
     private final String deliveryReports = "http://localhost:8086";
-    private final String getDeliveryReports = "/delivery-report/{enterpriseId}";
+    private final String getDeliveryReports = "/delivery-report/generation";
+    private final String getSupplierAndProducts = "/delivery-report/supplier-and-products/{enterpriseId}";
 
     private WebClient webClient;
 
@@ -121,6 +123,30 @@ public class ApiGatewayServices {
                         .exchange()
                         .flatMap(response -> response.toEntityList(SupplierPerformance.class))
                         .block();
+    }
+
+    public ResponseEntity<ProductSupplierAndProducts> getProductSupplierAndProducts (Long enterpriseId){
+        setWebClientBaseUri(deliveryReports);
+        return webClient.get()
+                .uri(getSupplierAndProducts,enterpriseId)
+                .exchange()
+                .flatMap(response -> response.toEntity(ProductSupplierAndProducts.class))
+                .block();
+
+    }
+
+    public ResponseEntity<ProductSupplierAndProducts> getDeliveryTime(ProductSupplierAndProducts productSupplierAndProducts) {
+        setWebClientBaseUri(productManagementBaseUrl);
+        return webClient.post().uri(deliveryTime).bodyValue(productSupplierAndProducts).exchange()
+                .flatMap(response -> response.toEntity(ProductSupplierAndProducts.class)).block();
+
+    }
+
+    public ResponseEntity<List<SupplierPerformance>> generateDeliveryReport(ProductSupplierAndProducts deliveryTime) {
+        setWebClientBaseUri(deliveryReports);
+        return webClient.post().uri(getDeliveryReports).bodyValue(deliveryTime).exchange()
+                .flatMap(response -> response.toEntityList(SupplierPerformance.class)).block();
+
     }
 
 }

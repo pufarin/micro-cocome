@@ -47,11 +47,6 @@ public class GatewayController {
         return apiGatewayServices.changeProductPrice(storeId, stockItemId, stockItem);
 
     }    
-/*    @PutMapping("stores/{storeId}/orders/{orderId}")
-    public ResponseEntity<OrderDeliveryDate> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
-        return apiGatewayServices.receiveOrder(orderDeliveryDate, orderId);
-        
-    }*/
 
     @PutMapping("stores/{storeId}/orders/{orderId}")
     public ResponseEntity<?> receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate) {
@@ -64,7 +59,11 @@ public class GatewayController {
         
     @GetMapping("enterprises/{enterpriseId}/delivery-reports")
     public ResponseEntity<List<SupplierPerformance>> getDeliveryReports(@PathVariable Long enterpriseId){
-        return apiGatewayServices.getDeliveryReports(enterpriseId);
+
+        ProductSupplierAndProducts productSupplierAndProducts = apiGatewayServices.getProductSupplierAndProducts(enterpriseId).getBody();
+        ProductSupplierAndProducts deliveryTime = apiGatewayServices.getDeliveryTime(productSupplierAndProducts).getBody();
+        List<SupplierPerformance> supplierPerformanceList = apiGatewayServices.generateDeliveryReport(deliveryTime).getBody();
+        return ResponseEntity.ok().body(supplierPerformanceList);
     }
     
 }

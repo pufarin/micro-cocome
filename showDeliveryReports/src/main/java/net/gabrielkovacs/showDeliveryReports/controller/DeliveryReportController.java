@@ -1,6 +1,7 @@
 package net.gabrielkovacs.showDeliveryReports.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import net.gabrielkovacs.showDeliveryReports.entities.ProductSupplierAndProducts;
+import org.springframework.web.bind.annotation.*;
 
 import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
 import net.gabrielkovacs.showDeliveryReports.services.GenerateReportService;
@@ -8,9 +9,6 @@ import net.gabrielkovacs.showDeliveryReports.services.GenerateReportService;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 
 
 @RestController
@@ -22,19 +20,16 @@ class DeliveryReportController{
         this.generateReportService = generateReportService;
     }
 
-    @GetMapping(value="delivery-report/{enterpriseId}")
-    public ResponseEntity<List<DeliveryReport>> generateDeliveryReportForEnterprise(@PathVariable long enterpriseId){
-        List<DeliveryReport> queryResult = generateReportService.generateDeliveryReport(enterpriseId);
-
-        if(queryResult.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
+    @GetMapping(value="delivery-report/supplier-and-products/{enterpriseId}")
+    public ResponseEntity<ProductSupplierAndProducts> generateProductSupplierAndProductsForEnterprise(@PathVariable long enterpriseId){
+        ProductSupplierAndProducts queryResult = generateReportService.generateProductSupplierAndProducts(enterpriseId);
         return ResponseEntity.ok().body(queryResult);
-        
-
     }
-    
-    
+
+    @PostMapping(value="delivery-report/generation")
+    public ResponseEntity<List<DeliveryReport>> generateDeliveryReport(@RequestBody ProductSupplierAndProducts productSupplierAndProducts){
+        List<DeliveryReport> deliveryReports = generateReportService.generateDeliveryReport(productSupplierAndProducts);
+        return ResponseEntity.ok().body(deliveryReports);
+    }
 
 }

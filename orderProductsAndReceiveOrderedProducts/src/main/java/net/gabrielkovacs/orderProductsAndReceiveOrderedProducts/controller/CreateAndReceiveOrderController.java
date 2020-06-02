@@ -1,9 +1,6 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.controller;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductDeliveryDuration;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.StockItem;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services.OrderProductService;
 
 import java.util.ArrayList;
@@ -38,10 +35,18 @@ public class CreateAndReceiveOrderController {
         return orderProductService.updateProductOrderDeliveryDate(receivedOrder,orderId);
     }
 
+/*
     @Operation(summary = "Used for UC6  Show Delivery Reports", description = "Needed to get the nr of days needed to deliver a order")
     @GetMapping("product-order/delivery-time")
     ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(@RequestParam ArrayList<Long> productsId){
         return orderProductService.getDeliveryDurationPerProduct(productsId);
+    }
+*/
+
+    @Operation(summary = "Used for UC6  Show Delivery Reports", description = "Needed to get the nr of days needed to deliver a order")
+    @PostMapping("product-order/delivery-time")
+    ResponseEntity<ProductSupplierAndProducts> getDeliveryDurationPerProduct(@RequestBody ProductSupplierAndProducts productSupplierAndProducts){
+        return orderProductService.getDeliveryDuration(productSupplierAndProducts);
     }
 
 }

@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderProductService {
@@ -65,8 +64,7 @@ public class OrderProductService {
             }
     }
 
-
-
+/*
     public ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(List<Long> productsId){
         List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
         if(queryResult.isEmpty()){
@@ -74,5 +72,30 @@ public class OrderProductService {
         }
 
         return ResponseEntity.ok().body(queryResult);
+    }
+*/
+
+    public ResponseEntity<ProductSupplierAndProducts> getDeliveryDuration(ProductSupplierAndProducts productSupplierAndProducts){
+        HashMap<Long, List<Long>> supplyChain = productSupplierAndProducts.getSupplyChain();
+
+        ProductSupplierAndProducts productDeliveryDurations = new ProductSupplierAndProducts();
+
+        List<Long> productSuppliers = supplyChain.keySet().stream().collect(Collectors.toList());
+
+        for(Long supplier: productSuppliers){
+            List<Long> nrDays = getDeliveryDurationPerProduct(supplyChain.get(supplier));
+            productDeliveryDurations.addEntryToSupplyChain(supplier, nrDays);
+        }
+
+        return ResponseEntity.ok().body(productDeliveryDurations);
+    }
+
+
+    private List<Long> getDeliveryDurationPerProduct(List<Long> productsId){
+        List<Long> queryResult = productOrderRepository.getNrDays(productsId);
+        if(queryResult.isEmpty()){
+            return Collections.emptyList();
+        }
+        return queryResult;
     }
 }
