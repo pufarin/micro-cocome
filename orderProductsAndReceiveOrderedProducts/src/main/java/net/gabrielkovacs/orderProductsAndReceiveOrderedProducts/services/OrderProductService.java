@@ -1,10 +1,6 @@
 package net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.services;
 
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.OrderEntry;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductDeliveryDuration;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ProductOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.ReceivedOrder;
-import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.StockItem;
+import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.entities.*;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.OrderEntryRepository;
 import net.gabrielkovacs.orderProductsAndReceiveOrderedProducts.repository.ProductOrderRepository;
 import org.springframework.http.HttpStatus;
@@ -14,9 +10,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderProductService {
@@ -112,12 +107,27 @@ public class OrderProductService {
                         .block();
     }
 
-    public ResponseEntity<List<ProductDeliveryDuration>> getDeliveryDurationPerProduct(List<Long> productsId){
-        List<ProductDeliveryDuration> queryResult = productOrderRepository.getNrDaysPerProductDelivery(productsId);
-        if(queryResult.isEmpty()){
-            return ResponseEntity.notFound().build();
+    public ProductSupplierAndProducts getDeliveryDuration(ProductSupplierAndProducts productSupplierAndProducts){
+        HashMap<Long, List<Long>> supplyChain = productSupplierAndProducts.getSupplyChain();
+
+        ProductSupplierAndProducts productDeliveryDurations = new ProductSupplierAndProducts();
+
+        List<Long> productSuppliers = supplyChain.keySet().stream().collect(Collectors.toList());
+
+        for(Long supplier: productSuppliers){
+            List<Long> nrDays = getDeliveryDurationPerProduct(supplyChain.get(supplier));
+            productDeliveryDurations.addEntryToSupplyChain(supplier, nrDays);
         }
 
-        return ResponseEntity.ok().body(queryResult);
+        return productDeliveryDurations;
+    }
+
+
+    private List<Long> getDeliveryDurationPerProduct(List<Long> productsId){
+        List<Long> queryResult = productOrderRepository.getNrDays(productsId);
+        if(queryResult.isEmpty()){
+            return Collections.emptyList();
+        }
+        return queryResult;
     }
 }

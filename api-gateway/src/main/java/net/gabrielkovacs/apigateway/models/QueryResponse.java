@@ -7,12 +7,13 @@ public class QueryResponse {
      private String payload;
      private String uuid;
      private Timestamp timeStamp;
-     private  String messageType = "response";
+     private  String messageType;
 
-     public QueryResponse(String payload, String uuid, Timestamp timeStamp) {
+     public QueryResponse(String payload, String uuid, Timestamp timeStamp, String messageType) {
           this.payload = payload;
           this.uuid = uuid;
           this.timeStamp = timeStamp;
+          this.messageType = messageType;
      }
 
      public String getPayload() {
@@ -41,6 +42,10 @@ public class QueryResponse {
 
      public String getMessageType() {
           return messageType;
+     }
+
+     public void setMessageType(String messageType) {
+          this.messageType = messageType;
      }
 
      @Override

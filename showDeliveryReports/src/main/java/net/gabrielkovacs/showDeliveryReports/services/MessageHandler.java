@@ -2,6 +2,7 @@ package net.gabrielkovacs.showDeliveryReports.services;
 
 import net.gabrielkovacs.showDeliveryReports.entities.ClientCallBack;
 import net.gabrielkovacs.showDeliveryReports.entities.DeliveryReport;
+import net.gabrielkovacs.showDeliveryReports.entities.ProductSupplierAndProducts;
 import net.gabrielkovacs.showDeliveryReports.entities.QueryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,21 +31,28 @@ public class MessageHandler {
         String eventName = clientCallBack.getEventName();
         Date date= new Date();
         switch (eventName){
-            case("returnDeliveryReports"):
-                log.info("Already in the returnDeliveryReports {}", eventName);
+            case("generateProductSupplierAndProducts"):
+                log.info("Already in the generateProductSupplierAndProducts {}", eventName);
 
                 Long enterpriseId = Long.parseLong(clientCallBack.getParameter());
-                List<DeliveryReport> deliveryReports = generateReportService.generateDeliveryReport(enterpriseId);
-
-                String responsePayload = messageManipulation.convertListOfDeliveryReportsToString(deliveryReports);
-                QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()));
+                ProductSupplierAndProducts productSupplierAndProducts = generateReportService.generateProductSupplierAndProducts(enterpriseId);
+                String responsePayload = messageManipulation.convertProductSupplierAndProductsToString(productSupplierAndProducts);
+                QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()), eventName);
                 log.info("This is the query response {} ", queryResponse.toString());
 
                 messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
 
                 break;
-            case("placeholder"):
-                log.info("Already in the placeholder {}", clientCallBack.toString());
+            case("generateDeliveryReport"):
+                log.info("Already in the generateDeliveryReport {}", eventName);
+                ProductSupplierAndProducts duration = messageManipulation.convertStringToProductSupplierAndProducts(clientCallBack.getParameter());
+
+                List<DeliveryReport> deliveryReports = generateReportService.generateDeliveryReport(duration);
+                String responsePayload1 = messageManipulation.convertListOfDeliveryReportsToString(deliveryReports);
+                QueryResponse queryResponse1 = new QueryResponse(responsePayload1,clientCallBack.getUuid(),new Timestamp( date.getTime()), eventName);
+                log.info("This is the query response {} ", queryResponse1.toString());
+
+                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse1));
 
                 break;
         }

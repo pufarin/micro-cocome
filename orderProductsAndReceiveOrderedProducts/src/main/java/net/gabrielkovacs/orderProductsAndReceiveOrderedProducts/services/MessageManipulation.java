@@ -28,8 +28,16 @@ public class MessageManipulation {
 
     public String convertResponseToString(ResponseEntity<?> responseEntity) {return  g.toJson(responseEntity);}
 
+    public String convertProductSupplierAndProductsToString(ProductSupplierAndProducts productSupplierAndProducts){
+        return g.toJson(productSupplierAndProducts);
+    }
+
     public IncomingProductOrder getIncomingProductOrderFromJSON(String data){
         return g.fromJson(data, IncomingProductOrder.class);
+    }
+
+    public ProductSupplierAndProducts convertStringToProductSupplierAndProducts(String message){
+        return g.fromJson(message, ProductSupplierAndProducts.class);
     }
 
     public ReceivedOrder getReceivedOrderFromJson(String data){

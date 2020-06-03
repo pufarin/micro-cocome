@@ -2,8 +2,11 @@ package net.gabrielkovacs.apigateway.controller;
 
 import com.google.gson.Gson;
 import net.gabrielkovacs.apigateway.entities.ClientCallBack;
+import net.gabrielkovacs.apigateway.entities.DeliveryReportsProcessingState;
 import net.gabrielkovacs.apigateway.models.*;
 import net.gabrielkovacs.apigateway.repository.ClientCallBackRepository;
+import net.gabrielkovacs.apigateway.repository.DeliveryReportsRepository;
+import net.gabrielkovacs.apigateway.services.DeliveryReportsProcessingStateService;
 import net.gabrielkovacs.apigateway.services.MessageProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +16,6 @@ import net.gabrielkovacs.apigateway.services.ApiGatewayServices;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,14 +33,20 @@ public class GatewayController {
     private ApiGatewayServices apiGatewayServices;
     private ClientCallBackRepository clientCallBackRepository;
     private MessageProducer messageProducer;
+    private DeliveryReportsRepository deliveryReportsRepository;
+    private DeliveryReportsProcessingStateService deliveryReportsProcessingStateService;
     private Gson gson = new Gson();
     Logger log = LoggerFactory.getLogger(GatewayController.class);
 
 
-    public GatewayController(ApiGatewayServices apiGatewayServices, ClientCallBackRepository clientCallBackRepository, MessageProducer messageProducer){
+    public GatewayController(ApiGatewayServices apiGatewayServices, ClientCallBackRepository clientCallBackRepository,
+                             MessageProducer messageProducer, DeliveryReportsRepository deliveryReportsRepository,
+                             DeliveryReportsProcessingStateService deliveryReportsProcessingStateService){
         this.apiGatewayServices = apiGatewayServices;
         this.clientCallBackRepository = clientCallBackRepository;
         this.messageProducer = messageProducer;
+        this.deliveryReportsRepository = deliveryReportsRepository;
+        this.deliveryReportsProcessingStateService = deliveryReportsProcessingStateService;
     }
 
     @PostMapping("stores/{storeId}/orders")
@@ -108,12 +116,23 @@ public class GatewayController {
     @GetMapping("enterprises/{enterpriseId}/delivery-reports")
     public ResponseEntity getDeliveryReports(@PathVariable Long enterpriseId, @RequestParam String call_back){
         Date date= new Date();
-
-        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(), call_back,
+        String correlationId = apiGatewayServices.generateCorrelationId();
+        ClientCallBack clientCallBack = new ClientCallBack( correlationId, call_back,
                 new Timestamp( date.getTime()),"returnDeliveryReports", enterpriseId.toString());
+
         clientCallBackRepository.save(clientCallBack);
+        clientCallBack.setEventName("generateProductSupplierAndProducts");
+
+        DeliveryReportsProcessingState deliveryRPS = new DeliveryReportsProcessingState(correlationId, "initiated",
+                                                    "returnDeliveryReports",enterpriseId.toString());
+        deliveryReportsRepository.save(deliveryRPS);
 
         messageProducer.sendMessageToShowDeliveryReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
+
+        String newState = deliveryReportsProcessingStateService.changeState("generateProductSupplierAndProducts",
+                deliveryRPS.getDeliveryReportsState());
+        deliveryRPS.setDeliveryReportsState(newState);
+        deliveryReportsRepository.save(deliveryRPS);
         log.info("Get DeliveryReports Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
         return ResponseEntity.accepted().build();
     }

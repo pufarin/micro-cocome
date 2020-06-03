@@ -37,8 +37,8 @@ public class MessageHandler {
                 OrderEntry orderEntry =  orderProductService.orderProduct(new OrderEntry(incomingProductOrder.getAmount(),
                         incomingProductOrder.getProductId()),incomingProductOrder.getStoreId());
                 String responsePayload = messageManipulation.convertOrderEntryToString(orderEntry);
-                QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()));
-                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
+                //QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()));
+                //messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
                 break;
             case("receiveOrder"):
                 log.info("Already in the receive order {}", clientCallBack.toString());
@@ -47,8 +47,19 @@ public class MessageHandler {
 
                 ResponseEntity<?> responseEntity = orderProductService.updateProductOrderDeliveryDate(receivedOrder,receivedOrder.getOrderId());
                 String responsePayloadReceivedOrder = messageManipulation.convertResponseToString(responseEntity);
-                QueryResponse queryResponseReceivedOrder = new QueryResponse(responsePayloadReceivedOrder,clientCallBack.getUuid(),new Timestamp( date.getTime()));
-                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
+                //QueryResponse queryResponseReceivedOrder = new QueryResponse(responsePayloadReceivedOrder,clientCallBack.getUuid(),new Timestamp( date.getTime()));
+                //messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
+
+                break;
+            case("getDeliveryDuration"):
+                log.info("Already in the getDeliveryDuration {}", eventName);
+
+                ProductSupplierAndProducts productSupplierAndProducts = messageManipulation.convertStringToProductSupplierAndProducts(clientCallBack.getParameter());
+                ProductSupplierAndProducts duration = orderProductService.getDeliveryDuration(productSupplierAndProducts);
+
+                String responsePayload3 = messageManipulation.convertProductSupplierAndProductsToString(duration);
+                QueryResponse queryResponse3 = new QueryResponse(responsePayload3,clientCallBack.getUuid(),new Timestamp( date.getTime()), eventName);
+                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse3));
 
                 break;
         }
