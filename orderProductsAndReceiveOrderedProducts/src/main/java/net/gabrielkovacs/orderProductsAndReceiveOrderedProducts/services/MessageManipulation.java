@@ -18,15 +18,11 @@ public class MessageManipulation {
         return g.fromJson(message, ClientCallBack.class);
     }
 
-
-
     public String convertQueryResponseToString(QueryResponse queryResponse){
         return g.toJson(queryResponse);
     }
 
     public String convertOrderEntryToString(OrderEntry orderEntry) {return g.toJson(orderEntry);}
-
-    public String convertResponseToString(ResponseEntity<?> responseEntity) {return  g.toJson(responseEntity);}
 
     public String convertProductSupplierAndProductsToString(ProductSupplierAndProducts productSupplierAndProducts){
         return g.toJson(productSupplierAndProducts);
