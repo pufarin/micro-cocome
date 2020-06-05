@@ -32,6 +32,8 @@ public class MessageManipulation {
         return g.toJson(productSupplierAndProducts);
     }
 
+    public String convertOrderDetailsToString(OrderDetails orderDetails) {return  g.toJson(orderDetails);}
+
     public IncomingProductOrder getIncomingProductOrderFromJSON(String data){
         return g.fromJson(data, IncomingProductOrder.class);
     }

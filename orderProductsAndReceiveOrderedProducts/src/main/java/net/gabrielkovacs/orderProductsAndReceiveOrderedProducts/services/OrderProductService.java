@@ -49,41 +49,24 @@ public class OrderProductService {
         return productOrder;
     }
 
-    public ResponseEntity<?> updateProductOrderDeliveryDate(ReceivedOrder receivedOrder, long orderId) {
+    public OrderDetails updateProductOrderDeliveryDate(ReceivedOrder receivedOrder, long orderId) {
         Optional<ProductOrder> queryResult = productOrderRepository.getProductOrderByOrderEntryId(orderId);
         if (!queryResult.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new OrderDetails();
         } else {
-            queryResult.ifPresent(productOrder -> {
-                productOrder.setDeliveryDate(receivedOrder.getDeliveryDate());
-                productOrderRepository.save(productOrder);
-            });
-
-        
+            ProductOrder productOrder = queryResult.get();
+            productOrder.setDeliveryDate(receivedOrder.getDeliveryDate());
+            productOrderRepository.save(productOrder);
 
             Optional<OrderEntry> orderEntry = orderEntryRepository.findById(orderId);
             long productId = orderEntry.get().getProductId();
             int orderedAmount = orderEntry.get().getAmount();
 
-            ResponseEntity<StockItem> stockItemQueryResult =  getStockItem(queryResult.get().getStoreId(), productId);
-            if(stockItemQueryResult.getStatusCode().equals(HttpStatus.OK)){
-                StockItem stockItem = stockItemQueryResult.getBody();
-                int existingAmount = stockItem.getAmount();
-                stockItem.setAmount(existingAmount+orderedAmount);
-                ResponseEntity<?> updateStockItemAmountRequest = updateStockItemAmount(stockItem,stockItem.getId());
-                if(updateStockItemAmountRequest.getStatusCode().equals(HttpStatus.OK)){
-                    return new ResponseEntity<>(HttpStatus.OK);
-                }else{
-                    return new ResponseEntity<>("Product amount could not be updated",HttpStatus.INTERNAL_SERVER_ERROR);
-                }
+            return new OrderDetails(productOrder.getStoreId(),productId, orderedAmount);
 
-
-            }else{
-                return new ResponseEntity<>("Could not retrieve product to be updated",HttpStatus.INTERNAL_SERVER_ERROR);
-            }    
-                       
         }
     }
+
 
 
     public ResponseEntity<StockItem> getStockItem(long storeId, long productId){

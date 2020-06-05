@@ -3,11 +3,14 @@ package net.gabrielkovacs.apigateway.controller;
 import com.google.gson.Gson;
 import net.gabrielkovacs.apigateway.entities.ClientCallBack;
 import net.gabrielkovacs.apigateway.entities.DeliveryReportsProcessingState;
+import net.gabrielkovacs.apigateway.entities.OrderProcessingState;
 import net.gabrielkovacs.apigateway.models.*;
 import net.gabrielkovacs.apigateway.repository.ClientCallBackRepository;
 import net.gabrielkovacs.apigateway.repository.DeliveryReportsRepository;
+import net.gabrielkovacs.apigateway.repository.OrderProcessingStateRepository;
 import net.gabrielkovacs.apigateway.services.DeliveryReportsProcessingStateService;
 import net.gabrielkovacs.apigateway.services.MessageProducer;
+import net.gabrielkovacs.apigateway.services.OrderProcessingStateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,18 +38,22 @@ public class GatewayController {
     private MessageProducer messageProducer;
     private DeliveryReportsRepository deliveryReportsRepository;
     private DeliveryReportsProcessingStateService deliveryReportsProcessingStateService;
+    private OrderProcessingStateRepository orderProcessingStateRepository;
+    private OrderProcessingStateService orderProcessingStateService;
     private Gson gson = new Gson();
     Logger log = LoggerFactory.getLogger(GatewayController.class);
 
 
     public GatewayController(ApiGatewayServices apiGatewayServices, ClientCallBackRepository clientCallBackRepository,
                              MessageProducer messageProducer, DeliveryReportsRepository deliveryReportsRepository,
-                             DeliveryReportsProcessingStateService deliveryReportsProcessingStateService){
+                             DeliveryReportsProcessingStateService deliveryReportsProcessingStateService, OrderProcessingStateRepository orderProcessingStateRepository, OrderProcessingStateService orderProcessingStateService){
         this.apiGatewayServices = apiGatewayServices;
         this.clientCallBackRepository = clientCallBackRepository;
         this.messageProducer = messageProducer;
         this.deliveryReportsRepository = deliveryReportsRepository;
         this.deliveryReportsProcessingStateService = deliveryReportsProcessingStateService;
+        this.orderProcessingStateRepository = orderProcessingStateRepository;
+        this.orderProcessingStateService = orderProcessingStateService;
     }
 
     @PostMapping("stores/{storeId}/orders")
@@ -100,14 +107,24 @@ public class GatewayController {
     @PutMapping("stores/{storeId}/orders/{orderId}")
     public ResponseEntity receiveOrder(@PathVariable Long storeId, @PathVariable Long orderId, @RequestBody OrderDeliveryDate orderDeliveryDate, @RequestParam String call_back) {
         Date date= new Date();
+        String correlationId = apiGatewayServices.generateCorrelationId();
 
-        ClientCallBack clientCallBack = new ClientCallBack(apiGatewayServices.generateCorrelationId(),call_back,
+        ClientCallBack clientCallBack = new ClientCallBack(correlationId, call_back,
                 new Timestamp( date.getTime()),"receiveOrder",
                 gson.toJson(new ReceivedOrder(orderDeliveryDate.getDeliveryDate(), storeId, orderId )));
 
         clientCallBackRepository.save(clientCallBack);
+        clientCallBack.setEventName("updateProductOrderDeliveryDate");
+
+        OrderProcessingState ops = new OrderProcessingState(correlationId,"initiated","receiveOrder",orderId, 0L);
+        orderProcessingStateRepository.save(ops);
 
         messageProducer.sendMessageToOrderProductsAndReceiveOrderedProducts(gson.toJson(clientCallBack));
+
+        String newState = orderProcessingStateService.changeState("updateProductOrderDeliveryDate",
+                ops.getOrderState());
+        ops.setOrderState(newState);
+        orderProcessingStateRepository.save(ops);
         log.info("Received order for product: {}", gson.toJson(clientCallBack));
         return ResponseEntity.accepted().build();
 

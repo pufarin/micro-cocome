@@ -35,7 +35,7 @@ public class MessageHandler {
 
                 List<ReportEntry> reportEntries = showStockReportsService.retrieveStockItemReportForStore(Long.parseLong(clientCallBack.getParameter()));
                 String responsePayload = messageManipulation.convertListOfReportEntryToString(reportEntries);
-                QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()));
+                QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()),"returnStockItemReports");
                 log.info("This is the query response {} ", queryResponse.toString());
                 messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
                // log.info("This is the query response as string {} ",messageManipulation.convertQueryResponseToString(queryResponse));
@@ -47,10 +47,27 @@ public class MessageHandler {
                 ResponseEntity<StockItem> responseEntity = showStockReportsService.changeStockItemPrice(stockItem.getId(), stockItem.getSalePrice());
                 log.info("This is the ResponseEntity {}:", responseEntity );
                 String responsePayload1 = messageManipulation.convertResponseEntityToString(responseEntity);
-                QueryResponse queryResponse1 = new QueryResponse(responsePayload1,clientCallBack.getUuid(),new Timestamp( date.getTime()));
+                QueryResponse queryResponse1 = new QueryResponse(responsePayload1,clientCallBack.getUuid(),new Timestamp( date.getTime()),"changeStockItemPrice");
                 log.info("This is the query response {} ", queryResponse1.toString());
                 messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse1));
 
+                break;
+            case("request_item_stock"):
+                log.info("Already in the request_item_stock {}", eventName);
+                OrderDetails orderDetails = messageManipulation.convertStringToOrderDetails(clientCallBack.getParameter());
+                StockItem stockItem1 = showStockReportsService.getStockItemByStoreIdAndProductId(orderDetails.getStoreId(), orderDetails.getProductId());
+                String responsePayload2 = messageManipulation.convertStockItemToString(stockItem1);
+                QueryResponse queryResponse2 = new QueryResponse(responsePayload2,clientCallBack.getUuid(),new Timestamp( date.getTime()),"request_item_stock");
+                log.info("This is the query response {} ", queryResponse2.toString());
+                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse2));
+                break;
+            case("updated_stock"):
+                log.info("Already in the updated_stock {}", eventName);
+                StockItem stockItem2 = messageManipulation.convertStringToStockItemObject(clientCallBack.getParameter());
+                String responsePayload3 = messageManipulation.convertStockItemToString(showStockReportsService.updateStockItem(stockItem2));
+                QueryResponse queryResponse3 = new QueryResponse(responsePayload3,clientCallBack.getUuid(),new Timestamp( date.getTime()),"updated_stock");
+                log.info("This is the query response {} ", queryResponse3.toString());
+                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse3));
                 break;
         }
     }

@@ -37,18 +37,18 @@ public class MessageHandler {
                 OrderEntry orderEntry =  orderProductService.orderProduct(new OrderEntry(incomingProductOrder.getAmount(),
                         incomingProductOrder.getProductId()),incomingProductOrder.getStoreId());
                 String responsePayload = messageManipulation.convertOrderEntryToString(orderEntry);
-                //QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()));
-                //messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
+                QueryResponse queryResponse = new QueryResponse(responsePayload,clientCallBack.getUuid(),new Timestamp( date.getTime()),"orderProduct");
+                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponse));
                 break;
-            case("receiveOrder"):
-                log.info("Already in the receive order {}", clientCallBack.toString());
+            case("updateProductOrderDeliveryDate"):
+                log.info("Already in the updateProductOrderDeliveryDate {}", clientCallBack.toString());
 
                 ReceivedOrder receivedOrder = messageManipulation.getReceivedOrderFromJson(clientCallBack.getParameter());
 
-                ResponseEntity<?> responseEntity = orderProductService.updateProductOrderDeliveryDate(receivedOrder,receivedOrder.getOrderId());
-                String responsePayloadReceivedOrder = messageManipulation.convertResponseToString(responseEntity);
-                //QueryResponse queryResponseReceivedOrder = new QueryResponse(responsePayloadReceivedOrder,clientCallBack.getUuid(),new Timestamp( date.getTime()));
-                //messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
+                OrderDetails orderDetails = orderProductService.updateProductOrderDeliveryDate(receivedOrder,receivedOrder.getOrderId());
+                String responsePayloadReceivedOrder = messageManipulation.convertOrderDetailsToString(orderDetails );
+                QueryResponse queryResponseReceivedOrder = new QueryResponse(responsePayloadReceivedOrder,clientCallBack.getUuid(),new Timestamp( date.getTime()),"updateProductOrderDeliveryDate");
+                messageProducer.sendMessageToApiGateway(messageManipulation.convertQueryResponseToString(queryResponseReceivedOrder));
 
                 break;
             case("getDeliveryDuration"):

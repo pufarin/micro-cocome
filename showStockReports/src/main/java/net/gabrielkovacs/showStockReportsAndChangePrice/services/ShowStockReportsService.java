@@ -33,16 +33,7 @@ public class ShowStockReportsService {
         return new ReportEntry(stockItemReport.getID(),stockItemReport.getAmount(), stockItemReport.getMinStock(),
                 stockItemReport.getMaxStock());
     }
-/*
-    // Should PUT return something?
-    public void changeStockItemPrice(Long stockItemId, Double newSalesPrice){
-        Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
-        queryResult.ifPresent(stockItem ->{stockItem.setSalePrice(newSalesPrice);
-            stockItemRepository.save(stockItem);
-        });
 
-    }
-*/
     public ResponseEntity<StockItem> changeStockItemPrice(Long stockItemId, Double newSalesPrice){
         Optional<StockItem> queryResult = stockItemRepository.findById(stockItemId);
 
@@ -54,5 +45,18 @@ public class ShowStockReportsService {
             return ResponseEntity.notFound().build();
         }
 
+    }
+
+    public StockItem getStockItemByStoreIdAndProductId(Long storeId, Long productId){
+        Optional<StockItem> queryResult = stockItemRepository.findAllByStoreIdAndProductId(storeId,productId);
+        if(queryResult.isPresent()){
+            return queryResult.get();
+        }else{
+            return new StockItem();
+        }
+    }
+
+    public StockItem updateStockItem(StockItem stockItem){
+        return stockItemRepository.save(stockItem);
     }
 }

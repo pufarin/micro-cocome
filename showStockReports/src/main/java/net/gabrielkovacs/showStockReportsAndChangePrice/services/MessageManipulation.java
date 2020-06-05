@@ -27,9 +27,15 @@ public class MessageManipulation {
          return g.toJson(result);
     }
 
+    public OrderDetails convertStringToOrderDetails(String message){
+        return g.fromJson(message, OrderDetails.class);
+    }
+
     public String convertQueryResponseToString(QueryResponse queryResponse){
         return g.toJson(queryResponse);
     }
 
     public String convertResponseEntityToString(ResponseEntity responseEntity) {return g.toJson(responseEntity);}
+
+    public String convertStockItemToString(StockItem stockItem) {return g.toJson(stockItem);}
 }
