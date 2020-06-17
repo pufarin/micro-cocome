@@ -3,6 +3,7 @@ insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, sto
 insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (302,60,10,35,21,102,200);
 insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (303,15,10,35,18,103,200);
 insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (304,15,10,35,18,103,201);
+insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (305,1,10,35,18,104,201);
 
 insert into productorder (id, delivery_date, ordering_date, store_id) values (5, '2019-10-06' ,'2019-10-04' , 200);
 insert into productorder (id, delivery_date, ordering_date, store_id) values (6, '2019-10-07', '2019-10-04', 200);
@@ -25,6 +26,7 @@ insert into tradingenterprise(id, name) values (902, 'evilCorporation2');
 insert into productsuplier (id,name) values (800,'apple_supiler');
 insert into productsuplier (id,name) values (801,'orange_supiler');
 insert into productsuplier (id,name) values (802,'banana_cabage_supiler');
+insert into productsuplier (id,name) values (803,'cheese_supiler');
 insert into tradinge_products(trading_enterprise_id, product_supplier_id) values (901, 800);
 insert into tradinge_products(trading_enterprise_id, product_supplier_id) values (901, 801);
 insert into tradinge_products(trading_enterprise_id, product_supplier_id) values (901, 802);
@@ -34,6 +36,7 @@ insert into product (id, barcode, name, purchaseprice, productsuplierid) values 
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (101, 12346, 'orange', 15, 801);
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (102, 12347, 'banana', 16, 802);
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (103, 12348, 'cabage', 17, 802);
+insert into product (id, barcode, name, purchaseprice, productsuplierid) values (104, 12349, 'cabage', 17, 803);
 
 /*
 insert into tradingenterprise(id, name) values (901, 'evilCorporation1');
