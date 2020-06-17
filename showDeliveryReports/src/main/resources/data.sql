@@ -3,6 +3,7 @@ insert into tradingenterprise(id, name) values (902, 'evilCorporation2');
 insert into productsuplier (id,name) values (800,'apple_supiler');
 insert into productsuplier (id,name) values (801,'orange_supiler');
 insert into productsuplier (id,name) values (802,'banana_cabage_supiler');
+insert into productsuplier (id,name) values (803,'cheese_supiler');
 insert into tradinge_products(trading_enterprise_id, product_supplier_id) values (901, 800);
 insert into tradinge_products(trading_enterprise_id, product_supplier_id) values (901, 801);
 insert into tradinge_products(trading_enterprise_id, product_supplier_id) values (901, 802);
@@ -12,6 +13,7 @@ insert into product (id, barcode, name, purchaseprice, productsuplierid) values 
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (101, 12346, 'orange', 15, 801);
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (102, 12347, 'banana', 16, 802);
 insert into product (id, barcode, name, purchaseprice, productsuplierid) values (103, 12348, 'cabage', 17, 802);
+insert into product (id, barcode, name, purchaseprice, productsuplierid) values (104, 12349, 'cabage', 17, 803);
 /*
 insert into store (id, location, name, tradingenterpriseid) values (200, 'viena1', 'store1', 901);
 insert into store (id, location, name, tradingenterpriseid) values (201, 'viena2', 'store2', 901);
