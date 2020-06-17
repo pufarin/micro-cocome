@@ -3,6 +3,7 @@ insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, sto
 insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (302,60,10,35,21,102,200);
 insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (303,15,10,35,18,103,200);
 insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (304,15,10,35,18,103,201);
+insert into stockitem (id, amount, minstock, maxstock, saleprice, productid, storeid) values (305,1,10,35,18,104,201);
 
 /*
 insert into tradingenterprise(id, name) values (901, 'evilCorporation1');
