@@ -1,4 +1,9 @@
 pipeline {
+     environment {
+        registrySR = "pufarin/sr"
+        registryCredential = 'dockerhub'
+        dockerImageSR = ''
+    }
     agent none
     /*
     agent {
@@ -20,21 +25,34 @@ pipeline {
 
             }
         }
-        stage('Deploy') {
+        stage('Build Image') {
            // agent {docker 'docker/compose'}
             agent any
             options { skipDefaultCheckout() }
             steps {
-                echo 'Stop the existing application'
-                sh "docker-compose -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml down"
+                echo 'Creating the Image'
+                script {
+                    dockerImageSR = docker.build registrySR + ":$BUILD_NUMBER"
+                }
+                //sh "docker-compose -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml down"
 
-                echo 'Build the images'
-                sh "docker-compose  -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml build --no-cache"
+                //echo 'Build the images'
+                //sh "docker-compose  -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml build --no-cache"
 
-                echo 'Start the application'
-                sh "docker-compose  -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml up -d"
+                //echo 'Start the application'
+                //sh "docker-compose  -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml up -d"
             }
         }
+        stage('Deploy Image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                    dockerImageSR.push()
+                    }
+                }
+            }
+        }
+
 
     }
     /*
