@@ -2,7 +2,7 @@ pipeline {
      environment {
         registrySR = "pufarin/sr"
         registryCredential = 'dockerhub'
-        dockerImageSr = ''
+        dockerImageSR = ''
     }
     agent none
     /*
@@ -33,24 +33,18 @@ pipeline {
                 echo 'Creating the Image'
                 script {
                     
-                    //dockerImageSR = docker.build registrySR + ":$BUILD_NUMBER"
-                    dockerImageSR = docker.build("docker-image-sr:${env.BUILD_ID}","-f ${env.WORKSPACE}/showStockReports/Dockerfile .") registrySR + ":$BUILD_NUMBER"
-                    //docker.build("docker-image-sr:${env.BUILD_ID}","-f ${env.WORKSPACE}/showStockReports/Dockerfile .")
+           
+                    dockerImageSR = docker.build("dockerImageSR:${env.BUILD_ID}","-f ${env.WORKSPACE}/showStockReports/Dockerfile ${env.WORKSPACE}/showStockReports") registrySR + ":$BUILD_NUMBER"
+   
                 }
-                //sh "docker-compose -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/docker-compose.yml down"
 
-                //echo 'Build the images'
-                //sh "docker-compose  -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/docker-compose.yml build --no-cache"
-
-                //echo 'Start the application'
-                //sh "docker-compose  -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/docker-compose.yml up -d"
             }
         }
         stage('Deploy Image') {
             steps{
                 script {
                     docker.withRegistry( '', registryCredential ) {
-                    dockerImageSr.push()
+                    dockerImageSR.push()
                     }
                 }
             }
