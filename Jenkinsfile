@@ -55,7 +55,7 @@ pipeline {
                 sshagent(credentials : ['the-key']) {
             sh '''
             ssh gabrielkovacs@swa-kovacs-vm1.cs.univie.ac.at
-            docker pull pufarin/sr:sr-v1.0  
+            'docker pull pufarin/sr:sr-v1.0'  
                ''' 
 
         }
