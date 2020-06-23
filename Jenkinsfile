@@ -17,9 +17,9 @@ pipeline {
             agent {docker 'adoptopenjdk/maven-openjdk11' }
             steps {
                 echo 'Building..'
-                sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
-                sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db/showDeliveryReports/pom.xml clean package'
-                sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db/showStockReports/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/showDeliveryReports/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/showStockReports/pom.xml clean package'
                 echo 'Jars have been created'
 
 
@@ -34,13 +34,13 @@ pipeline {
                 script {
                     dockerImageSR = docker.build registrySR + ":$BUILD_NUMBER"
                 }
-                //sh "docker-compose -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml down"
+                //sh "docker-compose -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/docker-compose.yml down"
 
                 //echo 'Build the images'
-                //sh "docker-compose  -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml build --no-cache"
+                //sh "docker-compose  -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/docker-compose.yml build --no-cache"
 
                 //echo 'Start the application'
-                //sh "docker-compose  -f /var/lib/jenkins/workspace/master_1_to_1_db/docker-compose.yml up -d"
+                //sh "docker-compose  -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/docker-compose.yml up -d"
             }
         }
         stage('Deploy Image') {
