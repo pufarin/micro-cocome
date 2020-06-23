@@ -50,13 +50,12 @@ pipeline {
             }
         }
         stage('Download and run Images') {
+            agent any
             steps{
-                node{
-                    sshagent(credentials : ['the-key']) {
-                        sh '''ssh swa-kovacs-vm1.cs.univie.ac.at 'docker pull pufarin/sr:sr-v1.0' ''' 
+                sshagent(credentials : ['the-key']) {
+            sh '''ssh swa-kovacs-vm1.cs.univie.ac.at 'docker pull pufarin/sr:sr-v1.0' ''' 
 
-                    }
-                }
+        }
             }
         }        
 
