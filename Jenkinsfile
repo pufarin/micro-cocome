@@ -34,7 +34,7 @@ pipeline {
                 script {
                     
            
-                    dockerImageSR = docker.build("${env.registrySR}/image-sr:${env.BUILD_ID}","-f ${env.WORKSPACE}/showStockReports/Dockerfile ${env.WORKSPACE}/showStockReports")
+                    dockerImageSR = docker.build("${env.registrySR}:${env.BUILD_ID}","-f ${env.WORKSPACE}/showStockReports/Dockerfile ${env.WORKSPACE}/showStockReports")
    
                 }
 
