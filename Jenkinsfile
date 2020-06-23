@@ -53,7 +53,10 @@ pipeline {
             agent any
             steps{
                 sshagent(credentials : ['the-key']) {
-            sh '''ssh gabrielkovacs@swa-kovacs-vm1.cs.univie.ac.at''' 
+            sh '''
+            ssh gabrielkovacs@swa-kovacs-vm1.cs.univie.ac.at
+            docker pull pufarin/sr:sr-v1.0  
+               ''' 
 
         }
             }
