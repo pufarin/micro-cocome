@@ -35,7 +35,7 @@ pipeline {
                     
                     //dockerImageSR = docker.build registrySR + ":$BUILD_NUMBER"
                     dockerImageSR = docker.build("dockerImageSR:${env.BUILD_ID}","-f ${env.WORKSPACE}/showStockReports/Dockerfile .") registrySR + ":$BUILD_NUMBER"
-                    //docker.build("dockerImageSR:${env.BUILD_ID}","-f ${env.WORKSPACE}/showStockReports/Dockerfile .")
+                    //docker.build("docker-image-sr:${env.BUILD_ID}","-f ${env.WORKSPACE}/showStockReports/Dockerfile .")
                 }
                 //sh "docker-compose -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/docker-compose.yml down"
 
