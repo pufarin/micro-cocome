@@ -24,7 +24,7 @@ public class OrderProductService {
     private ProductOrderRepository productOrderRepository;
     private OrderEntryRepository orderEntryRepository;
     
-    private final String baseUri = "http://localhost:8085";
+    private final String baseUri = "hhttp://swa-kovacs-vm2.cs.univie.ac.at";
     private final String getStockItemByStoreIdAnsProductId = "/stockitem?storeId={storeId}&productId={productId}";
     private final String updateStockItemAmount = "/stockitem/{stockItemId}";
 
