@@ -20,7 +20,7 @@ public class GenerateReportService {
 
     Logger log = LoggerFactory.getLogger(GenerateReportService.class);
 
-    private final String baseUri = "http://swa-kovacs-vm3.cs.univie.ac.at";
+    private final String baseUri = "http://swa-kovacs-vm3.cs.univie.ac.at/oprop";
     private final String getDeliveryTimePerProductId = "product-order/delivery-time";
 
     private WebClient webClient = WebClient.create(baseUri);
