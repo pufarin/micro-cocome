@@ -21,9 +21,9 @@ pipeline {
             agent {docker 'adoptopenjdk/maven-openjdk11' }
             steps {
                 echo 'Building..'
-                sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
-                sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/showDeliveryReports/pom.xml clean package'
-                sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/showStockReports/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db_distributed/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db_distributed/showDeliveryReports/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/master_1_to_1_db_distributed/showStockReports/pom.xml clean package'
                 echo 'Jars have been created'
 
 
