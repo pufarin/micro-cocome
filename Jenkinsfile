@@ -1,8 +1,12 @@
 pipeline {
      environment {
-        registrySR = "pufarin/sr"
-        registryCredential = 'dockerhub'
-        dockerImageSR = ''
+          registrySR = "pufarin/sr"
+          registryDR = "pufarin/dr"
+          registryOPROP = "pufarin/oprop"
+          registryCredential = 'dockerhub'
+          dockerImageSR = ''
+          dockerImageDR = ''
+          dockerImageOPROP = ''
     }
     agent none
     /*
@@ -17,8 +21,8 @@ pipeline {
             agent {docker 'adoptopenjdk/maven-openjdk11' }
             steps {
                 echo 'Building..'
-                //sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
-                //sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/showDeliveryReports/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/showDeliveryReports/pom.xml clean package'
                 sh 'mvn -f /var/lib/jenkins/workspace/docker_repo_jenkins_push/showStockReports/pom.xml clean package'
                 echo 'Jars have been created'
 
@@ -32,8 +36,8 @@ pipeline {
             steps {
                 echo 'Creating the Image'
                 script {
-                    
-           
+                    dockerImageOPROP = docker.build("${env.registryOPROP}:oprop-v1.0","-f ${env.WORKSPACE}/orderProductsAndReceiveOrderedProducts/Dockerfile ${env.WORKSPACE}/orderProductsAndReceiveOrderedProducts")
+                    dockerImageDR = docker.build("${env.registryDR}:dr-v1.0","-f ${env.WORKSPACE}/showDeliveryReports/Dockerfile ${env.WORKSPACE}/showDeliveryReports")
                     dockerImageSR = docker.build("${env.registrySR}:sr-v1.0","-f ${env.WORKSPACE}/showStockReports/Dockerfile ${env.WORKSPACE}/showStockReports")
    
                 }
@@ -43,8 +47,10 @@ pipeline {
         stage('Deploy Image') {
             steps{
                 script {
-                    docker.withRegistry( '', registryCredential ) {
-                    dockerImageSR.push()
+                         docker.withRegistry( '', registryCredential ) {
+                         dockerImageOPROP.push()
+                         dockerImageDR.push()
+                         dockerImageSR.push()
                     }
                 }
             }
@@ -53,7 +59,9 @@ pipeline {
             agent any
             steps{
                 sshagent(credentials : ['the-key']) {
-            sh '''ssh gabrielkovacs@swa-kovacs-vm1.cs.univie.ac.at "/snap/bin/docker pull pufarin/sr:sr-v1.0" ''' 
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm2.cs.univie.ac.at "/snap/bin/docker pull pufarin/sr:sr-v1.0" "/snap/bin/docker run -d --restart=always  -p 8085:8085 pufarin/sr:sr-v1.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm3.cs.univie.ac.at "/snap/bin/docker pull pufarin/oprop:oprop-v1.0" "/snap/bin/docker run -d --restart=always  -p 8083:8083 pufarin/oprop:oprop-v1.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm4.cs.univie.ac.at "/snap/bin/docker pull pufarin/dr:dr-v1.0" "/snap/bin/docker run -d --restart=always  -p 8086:8086 pufarin/dr:dr-v1.0" ''' 
 
         }
             }
