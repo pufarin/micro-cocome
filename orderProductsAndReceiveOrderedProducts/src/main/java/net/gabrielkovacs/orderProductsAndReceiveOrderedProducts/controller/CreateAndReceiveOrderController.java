@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 public class CreateAndReceiveOrderController {
 
     private OrderProductService orderProductService;
-    private final String baseUri = "http://localhost:8085";
+
 
     public CreateAndReceiveOrderController(OrderProductService orderProductService){
         this.orderProductService = orderProductService;
@@ -43,9 +43,5 @@ public class CreateAndReceiveOrderController {
         return orderProductService.getDeliveryDurationPerProduct(productsId);
     }
 
-    @GetMapping("stockitem")
-    public ResponseEntity<StockItem> getStuff() {
-        this.orderProductService.setWebClientBaseUri(this.baseUri);
-        return orderProductService.getStockItem(200, 100);
-    }
+
 }
