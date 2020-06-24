@@ -36,8 +36,8 @@ pipeline {
             steps {
                 echo 'Creating the Image'
                 script {
-                    dockerImageOPROP = docker.build("${env.registryOPROP}:oprop-v1.0","-f ${env.WORKSPACE}/orderProductsAndReceiveOrderedProducts/Dockerfile ${env.WORKSPACE}/orderProductsAndReceiveOrderedProducts")
-                    dockerImageDR = docker.build("${env.registryDR}:dr-v1.0","-f ${env.WORKSPACE}/showDeliveryReports/Dockerfile ${env.WORKSPACE}/showDeliveryReports")
+                    dockerImageOPROP = docker.build("${env.registryOPROP}:oprop-v1.0","-f ${env.WORKSPACE}/orderProductsAndReceiveOrderedProducts/dockerfile ${env.WORKSPACE}/orderProductsAndReceiveOrderedProducts")
+                    dockerImageDR = docker.build("${env.registryDR}:dr-v1.0","-f ${env.WORKSPACE}/showDeliveryReports/dockerfile ${env.WORKSPACE}/showDeliveryReports")
                     dockerImageSR = docker.build("${env.registrySR}:sr-v1.0","-f ${env.WORKSPACE}/showStockReports/Dockerfile ${env.WORKSPACE}/showStockReports")
    
                 }
