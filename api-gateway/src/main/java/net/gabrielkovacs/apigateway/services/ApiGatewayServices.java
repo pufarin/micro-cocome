@@ -17,15 +17,15 @@ import net.gabrielkovacs.apigateway.models.StockItemReport;
 @Service
 public class ApiGatewayServices {
 
-    private final String productManagementBaseUrl = "http://172.17.0.1:8083";
+    private final String productManagementBaseUrl = "http://swa-kovacs-vm3.cs.univie.ac.at/oprop";
     private final String createOrderPath = "/store/{id}/order";
     private final String receivedOrderPath = "/product-order/{orderEntryId}";   
 
-    private final String stockReports = "http://172.17.0.1:8085";
-    private final String getStockItemReports = "stockitemreport/{storeId}";
-    private final String changePrice = "stockitem/store/{storeId}/{stockItemId}";
+    private final String stockReports = "http://swa-kovacs-vm2.cs.univie.ac.at/sr";
+    private final String getStockItemReports = "/stockitemreport/{storeId}";
+    private final String changePrice = "/stockitem/store/{storeId}/{stockItemId}";
 
-    private final String deliveryReports = "http://172.17.0.1:8086";
+    private final String deliveryReports = "http://swa-kovacs-vm4.cs.univie.ac.at/dr";
     private final String getDeliveryReports = "/delivery-report/{enterpriseId}";
 
     private WebClient webClient;
