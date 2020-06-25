@@ -1,4 +1,15 @@
 pipeline {
+     environment {
+          registryAG = "pufarin/ag"
+          registrySR = "pufarin/sr"
+          registryDR = "pufarin/dr"
+          registryOPROP = "pufarin/oprop"
+          registryCredential = 'dockerhub'
+          dockerImageSR = ''
+          dockerImageDR = ''
+          dockerImageOPROP = ''
+          dockerImageAG = ''
+    }
     agent none
     /*
     agent {
@@ -12,31 +23,57 @@ pipeline {
             agent {docker 'adoptopenjdk/maven-openjdk11' }
             steps {
                 echo 'Building..'
-                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db/common/pom.xml clean install'
-                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
-                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db/showDeliveryReports/pom.xml clean package'
-                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db/showStockReports/pom.xml clean package'
-                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db/api-gateway/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db_distributed/common/pom.xml clean install'
+                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db_distributed/orderProductsAndReceiveOrderedProducts/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db_distributed/showDeliveryReports/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db_distributed/showStockReports/pom.xml clean package'
+                sh 'mvn -f /var/lib/jenkins/workspace/api_gateway_one_db_distributed/api-gateway/pom.xml clean package'
                 echo 'Jars have been created'
 
 
             }
         }
-        stage('Deploy') {
+        stage('Build Image') {
            // agent {docker 'docker/compose'}
             agent any
             options { skipDefaultCheckout() }
             steps {
-                echo 'Stop the existing application'
-                sh "docker-compose -f /var/lib/jenkins/workspace/api_gateway_one_db/docker-compose.yml down"
+                echo 'Creating the Image'
+                script {
+                    dockerImageOPROP = docker.build("${env.registryOPROP}:oprop-v4.0","-f ${env.WORKSPACE}/orderProductsAndReceiveOrderedProducts/dockerfile ${env.WORKSPACE}/orderProductsAndReceiveOrderedProducts")
+                    dockerImageDR = docker.build("${env.registryDR}:dr-v4.0","-f ${env.WORKSPACE}/showDeliveryReports/dockerfile ${env.WORKSPACE}/showDeliveryReports")
+                    dockerImageSR = docker.build("${env.registrySR}:sr-v4.0","-f ${env.WORKSPACE}/showStockReports/dockerfile ${env.WORKSPACE}/showStockReports")
+                    dockerImageAG = docker.build("${env.registryAG}:ag-v4.0","-f ${env.WORKSPACE}/api-gateway/dockerfile ${env.WORKSPACE}/api-gateway")
+   
+                }
 
-                echo 'Build the images'
-                sh "docker-compose  -f /var/lib/jenkins/workspace/api_gateway_one_db/docker-compose.yml build --no-cache"
-
-                echo 'Start the application'
-                sh "docker-compose  -f /var/lib/jenkins/workspace/api_gateway_one_db/docker-compose.yml up -d"
             }
         }
+        stage('Push Image') {
+            steps{
+                script {
+                         docker.withRegistry( '', registryCredential ) {
+                         dockerImageOPROP.push()
+                         dockerImageDR.push()
+                         dockerImageSR.push()
+                         dockerImageAG.push()
+                    }
+                }
+            }
+        }
+        stage('Download and run Images') {
+            agent any
+            steps{
+                sshagent(credentials : ['the-key']) {
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm2.cs.univie.ac.at "/snap/bin/docker pull pufarin/sr:sr-v4.0 | /snap/bin/docker run -d --restart=always  -p 8085:8085 pufarin/sr:sr-v4.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm3.cs.univie.ac.at "/snap/bin/docker pull pufarin/oprop:oprop-v4.0 | /snap/bin/docker run -d --restart=always  -p 8083:8083 pufarin/oprop:oprop-v4.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm4.cs.univie.ac.at "/snap/bin/docker pull pufarin/dr:dr-v4.0 | /snap/bin/docker run -d --restart=always  -p 8086:8086 pufarin/dr:dr-v4.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm1.cs.univie.ac.at "/snap/bin/docker pull pufarin/ag:ag-v4.0 | /snap/bin/docker run -d --restart=always  -p 8082:8082 pufarin/ag:ag-v4.0" '''                     
+
+        }
+            }
+        }        
+
 
     }
     /*
