@@ -17,18 +17,18 @@ public class ApiGatewayServices {
 
     Logger log = LoggerFactory.getLogger(ApiGatewayServices.class);
 
-    private final String productManagementBaseUrl = "http://localhost:8083";
+    private final String productManagementBaseUrl = "http://swa-kovacs-vm3.cs.univie.ac.at/oprop";
     private final String createOrderPath = "/store/{id}/order";
     private final String receivedOrderPath = "/product-order/{orderEntryId}";
-    private final String deliveryTime = "product-order/delivery-time";
+    private final String deliveryTime = "/product-order/delivery-time";
 
-    private final String stockReports = "http://localhost:8085";
-    private final String getStockItemReports = "stockitemreport/{storeId}";
-    private final String changePrice = "stockitem/store/{storeId}/{stockItemId}";
+    private final String stockReports = "http://swa-kovacs-vm2.cs.univie.ac.at/sr";
+    private final String getStockItemReports = "/stockitemreport/{storeId}";
+    private final String changePrice = "/stockitem/store/{storeId}/{stockItemId}";
     private final String getStockItemByStoreIdAnsProductId = "/stockitem?storeId={storeId}&productId={productId}";
     private final String updateStockItemAmount = "/stockitem/{stockItemId}";
 
-    private final String deliveryReports = "http://localhost:8086";
+    private final String deliveryReports = "http://swa-kovacs-vm4.cs.univie.ac.at/dr";
     private final String getDeliveryReports = "/delivery-report/generation";
     private final String getSupplierAndProducts = "/delivery-report/supplier-and-products/{enterpriseId}";
 
