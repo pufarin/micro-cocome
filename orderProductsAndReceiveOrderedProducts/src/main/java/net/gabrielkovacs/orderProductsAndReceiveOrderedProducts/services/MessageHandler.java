@@ -81,6 +81,11 @@ public class MessageHandler {
 
                 } else {
                     log.info("Everything is OK");
+                    
+                    queryResult.ifPresent(productOrder -> {
+                    productOrder.setDeliveryDate(receivedOrder.getDeliveryDate());
+                    productOrderRepository.save(productOrder);
+                    });
                     Optional<OrderEntry> orderEntry1 = orderEntryRepository.findById((long) receivedOrder.getOrderId());
                     long productId = orderEntry1.get().getProductId();
                     int orderedAmount = orderEntry1.get().getAmount();
