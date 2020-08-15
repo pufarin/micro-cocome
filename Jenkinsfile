@@ -64,10 +64,10 @@ pipeline {
             agent any
             steps{
                 sshagent(credentials : ['the-key']) {
-                     sh '''ssh gabrielkovacs@swa-kovacs-vm2.cs.univie.ac.at "/snap/bin/docker container stop sr | /snap/bin/docker container rm sr |  /snap/bin/docker pull pufarin/sr:sr-v3.0 | /snap/bin/docker run -d --name sr --restart=always  -p 8085:8085 pufarin/sr:sr-v3.0" '''
-                     sh '''ssh gabrielkovacs@swa-kovacs-vm3.cs.univie.ac.at "/snap/bin/docker container stop oprop | /snap/bin/docker container rm oprop | /snap/bin/docker pull pufarin/oprop:oprop-v3.0 | /snap/bin/docker run -d --name oprop --restart=always  -p 8083:8083 pufarin/oprop:oprop-v3.0" '''
-                     sh '''ssh gabrielkovacs@swa-kovacs-vm4.cs.univie.ac.at "/snap/bin/docker container stop dr | /snap/bin/docker container rm dr | /snap/bin/docker pull pufarin/dr:dr-v3.0 | /snap/bin/docker run -d --name dr --restart=always  -p 8086:8086 pufarin/dr:dr-v3.0" '''
-                     sh '''ssh gabrielkovacs@swa-kovacs-vm1.cs.univie.ac.at "/snap/bin/docker container stop ag | /snap/bin/docker container rm ag | /snap/bin/docker pull pufarin/ag:ag-v3.0 | /snap/bin/docker run -d --name ag --restart=always  -p 8082:8082 pufarin/ag:ag-v3.0" '''                     
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm2.cs.univie.ac.at "/snap/bin/docker container stop sr || true && /snap/bin/docker container rm sr || true &&  /snap/bin/docker pull pufarin/sr:sr-v3.0 && /snap/bin/docker run -d --name sr --restart=always  -p 8085:8085 pufarin/sr:sr-v3.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm3.cs.univie.ac.at "/snap/bin/docker container stop oprop || true && /snap/bin/docker container rm oprop || true && /snap/bin/docker pull pufarin/oprop:oprop-v3.0 && /snap/bin/docker run -d --name oprop --restart=always  -p 8083:8083 pufarin/oprop:oprop-v3.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm4.cs.univie.ac.at "/snap/bin/docker container stop dr || true && /snap/bin/docker container rm dr || true && /snap/bin/docker pull pufarin/dr:dr-v3.0 && /snap/bin/docker run -d --name dr --restart=always  -p 8086:8086 pufarin/dr:dr-v3.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm1.cs.univie.ac.at "/snap/bin/docker container stop ag || true && /snap/bin/docker container rm ag || true && /snap/bin/docker pull pufarin/ag:ag-v3.0 && /snap/bin/docker run -d --name ag --restart=always  -p 8082:8082 pufarin/ag:ag-v3.0" '''                     
 
         }
             }
