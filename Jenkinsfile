@@ -59,9 +59,9 @@ pipeline {
             agent any
             steps{
                 sshagent(credentials : ['the-key']) {
-                     sh '''ssh gabrielkovacs@swa-kovacs-vm2.cs.univie.ac.at "/snap/bin/docker pull pufarin/sr:sr-v1.0 | /snap/bin/docker run -d --restart=always  -p 8085:8085 pufarin/sr:sr-v1.0" '''
-                     sh '''ssh gabrielkovacs@swa-kovacs-vm3.cs.univie.ac.at "/snap/bin/docker pull pufarin/oprop:oprop-v1.0 | /snap/bin/docker run -d --restart=always  -p 8083:8083 pufarin/oprop:oprop-v1.0" '''
-                     sh '''ssh gabrielkovacs@swa-kovacs-vm4.cs.univie.ac.at "/snap/bin/docker pull pufarin/dr:dr-v1.0 | /snap/bin/docker run -d --restart=always  -p 8086:8086 pufarin/dr:dr-v1.0" ''' 
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm2.cs.univie.ac.at "/snap/bin/docker container stop sr | /snap/bin/docker container rm sr |  /snap/bin/docker pull pufarin/sr:sr-v1.0 | /snap/bin/docker run -d --name sr --restart=always  -p 8085:8085 pufarin/sr:sr-v1.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm3.cs.univie.ac.at "/snap/bin/docker container stop oprop | /snap/bin/docker container rm oprop | /snap/bin/docker pull pufarin/oprop:oprop-v1.0 | /snap/bin/docker run -d --name oprop --restart=always  -p 8083:8083 pufarin/oprop:oprop-v1.0" '''
+                     sh '''ssh gabrielkovacs@swa-kovacs-vm4.cs.univie.ac.at "/snap/bin/docker container stop dr | /snap/bin/docker container rm dr | /snap/bin/docker pull pufarin/dr:dr-v1.0 | /snap/bin/docker run -d --name dr --restart=always  -p 8086:8086 pufarin/dr:dr-v1.0" '''
 
         }
             }
