@@ -70,7 +70,7 @@ public class GatewayController {
         messageProducer.sendMessageToOrderProductsAndReceiveOrderedProducts(gson.toJson(clientCallBack));
         log.info("Create new product order: {}", gson.toJson(clientCallBack));
 
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.accepted().body(clientCallBack);
 
     }
 
@@ -84,7 +84,7 @@ public class GatewayController {
         messageProducer.sendMessageToShowStockReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
         log.info("Get StockItemReport Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
 
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.accepted().body(clientCallBack);
     }
 
     @PutMapping("stores/{storeId}/stockitems/{stockItemId}")
@@ -100,7 +100,7 @@ public class GatewayController {
         messageProducer.sendMessageToShowStockReports(apiGatewayServices.generateJSONStringFromClass(clientCallBack));
         log.info("Change stock item price Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
 
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.accepted().body(clientCallBack);
 
     }
 
@@ -126,7 +126,7 @@ public class GatewayController {
         ops.setOrderState(newState);
         orderProcessingStateRepository.save(ops);
         log.info("Received order for product: {}", gson.toJson(clientCallBack));
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.accepted().body(clientCallBack);
 
     }
 
@@ -151,6 +151,6 @@ public class GatewayController {
         deliveryRPS.setDeliveryReportsState(newState);
         deliveryReportsRepository.save(deliveryRPS);
         log.info("Get DeliveryReports Message: {}", apiGatewayServices.generateJSONStringFromClass(clientCallBack));
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.accepted().body(clientCallBack);
     }
 }
